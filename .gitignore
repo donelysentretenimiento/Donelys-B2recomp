@@ -155,3 +155,10 @@
 !/ESTADO_DEL_PROYECTO.md
 !/docs/autoría-y-contribuciones/
 !/docs/autoría-y-contribuciones/**
+
+# ---- HDR (edicion mejorada)
+!/scripts/hdr_run.ps1
+!/scripts/test_hdr_color.bat
+!/tests/
+!/tests/hdr_color_test.c
+!/tests/hdr_probe.c

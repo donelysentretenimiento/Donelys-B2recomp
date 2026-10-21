@@ -129,7 +129,19 @@ static const char *const k_default_ini =
 ";   (scripts/fps_patch.py, notes/fps-research.md). Not every frame counter is converted yet: some effects, menus and\r\n"
 ";   button-mash prompts may run faster than at 60, and the cinematics run in real time. vsync = clock / display /\r\n"
 ";   auto still show each frame at once above 60 (no tearing: mailbox, else FIFO, which shows at most one frame per refresh).\r\n"
-"frame_rate = 60\r\n";
+"frame_rate = 60\r\n"
+"\r\n"
+"; hdr = off | auto | hdr10 | scrgb      (Vulkan, edicion mejorada)\r\n"
+";   off:   SDR, exactly as before. auto: HDR10, else scRGB, only when Windows has HDR on for the monitor of the window.\r\n"
+";   hdr10: 10-bit PQ / Rec.2020.  scrgb: 16-bit float, linear. If the mode is not offered the game stays in SDR.\r\n"
+";   The picture is the game's SDR picture converted correctly (not the engine's own HDR).\r\n"
+"hdr = off\r\n"
+"; hdr_sdr_white = 0 | 80 .. 500   nits of SDR white; 0 = the value of Windows' SDR content brightness slider\r\n"
+"hdr_sdr_white = 0\r\n"
+"; hdr_peak = 0 | 400 .. 10000   nits the highlight expansion may reach; 0 = the monitor's peak\r\n"
+"hdr_peak = 0\r\n"
+"; hdr_expand = 0 .. 100   optional highlight expansion (0 = off)\r\n"
+"hdr_expand = 0\r\n";
 
 #define GFX_LOW_SCALE 0.5f
 #define GFX_LOW_SCALE_TEXT "0.50"
@@ -199,6 +211,10 @@ static BOOL CALLBACK opt_load(PINIT_ONCE once, PVOID arg, PVOID *ctx) {
         else if (!_stricmp(key, "aspect")) o->aspect_stretch = !_stricmp(val, "stretch");      /* [Recomps#1] */
         else if (!_stricmp(key, "shader_prepare")) o->shader_prepare = !_stricmp(val, "background") ? 1 : !_stricmp(val, "off") ? 2 : 0;
         else if (!_stricmp(key, "frame_rate")) { int v = atoi(val); o->frame_rate = v < 60 ? 60 : v > 120 ? 120 : v; }      /* [Recomps#1] */
+        else if (!_stricmp(key, "hdr")) o->hdr_mode = !_stricmp(val, "auto") ? 1 : !_stricmp(val, "hdr10") ? 2 : !_stricmp(val, "scrgb") ? 3 : 0;
+        else if (!_stricmp(key, "hdr_sdr_white")) { int v = atoi(val); o->hdr_sdr_white = v >= 80 && v <= 500 ? v : 0; }
+        else if (!_stricmp(key, "hdr_peak")) { int v = atoi(val); o->hdr_peak = v >= 400 && v <= 10000 ? v : 0; }
+        else if (!_stricmp(key, "hdr_expand")) { int v = atoi(val); o->hdr_expand = v < 0 ? 0 : v > 100 ? 100 : v; }
         else unknown++;
     }
     if (f) fclose(f);

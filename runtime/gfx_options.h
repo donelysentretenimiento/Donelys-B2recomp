@@ -18,6 +18,11 @@ typedef struct {
     int aspect_stretch;     /* [Recomps#1] aspect = keep (0, default: the picture keeps its shape, black bars on a wider or taller
                                window, e.g. an ultrawide monitor) | stretch (1: it fills the window); nvn_vk_draw.c present (Vulkan) */
     int frame_rate;         /* [Recomps#1] frame_rate = 60 (the game as made) .. 120: above 60 the lifted frame-rate patch is on, capped there */
+    /* edicion mejorada, HDR (hdr_vk.c): graphics.ini  hdr = off | auto | hdr10 | scrgb,  hdr_sdr_white (nits), hdr_peak (nits), hdr_expand (0..100) */
+    int hdr_mode;           /* 0 off (default: SDR exactly as before), 1 auto, 2 HDR10, 3 scRGB */
+    int hdr_sdr_white;      /* nits that SDR white (the game's 100 % white) is shown at; 0 = ask Windows (its SDR content brightness slider) */
+    int hdr_peak;           /* nits of the brightest highlight the optional expansion may reach; 0 = the monitor's reported peak */
+    int hdr_expand;         /* 0 = none (the SDR picture shown as it is, only converted), 100 = full highlight expansion */
 } GfxOptions;
 const GfxOptions *gfx_options(void);      /* any thread; read once (the file is written with defaults when it does not exist) */
 #endif

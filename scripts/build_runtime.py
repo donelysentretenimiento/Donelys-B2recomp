@@ -47,13 +47,13 @@ HOST_SOURCES = ['hostrt.c', 'boot.c', 'nnsdk.c', 'libcxx.c', 'os_threads.c', 'nv
                 'mx_translate.c', 'tex_decode.c', 'nnfs.c', 'clib.c', 'nntime.c', 'nnhid.c', 'nnpad_sdl.c', 'gen/sdkdata.c',
                 'display.c', 'nnpl.c', 'nnfontll.c', 'nnmovie.c', 'nnmisc.c', 'nnaudio.c', 'nnmovie_mf.c', 'nniostream.c',
                 'nncxxrt.c', 'nncxxlib.c', 'nnlibc2.c', 'gen/sdklift_gen.c', 'sdklift_rt.c', 'nnsdk2.c', 'nnapplet.c',
-                'nnalbum.c', 'nnnet.c', 'nnfsdir.c', 'nnunwind.c', 'nvn_sdk.c', 'nvn_c4.c', 'nvn_c5.c', 'gfx_options.c',
+                'nnalbum.c', 'nnnet.c', 'nnfsdir.c', 'nnunwind.c', 'nvn_sdk.c', 'nvn_c4.c', 'nvn_c5.c', 'gfx_options.c', 'hdr_win.c',
                 'hitch.c', 'r0_removed.c', 'r2_imports.c', 'watch.c', 'gamedll.c']
 HOST_FLAGS = ['-O1', '-g', '-gcodeview', '-w', '-fno-strict-aliasing', '-mcx16', '-I', RT, '-I', GENRT,   # debug info: crash addresses -> source (llvm-symbolizer)
               '-Dfn_table=(*game_fn_table_p)', '-Dfn_table_count=(*game_fn_table_count_p)',
               '-Ddyn_syms=(*game_dyn_syms_p)', '-Ddyn_sym_count=(*game_dyn_sym_count_p)',
               '-I', os.path.join(SDL3, 'include'), '-I', os.path.join(VKH, 'include')]
-LIBS = ['-luser32', '-lgdi32', '-lwinmm', '-lmfplat', '-lmfreadwrite', '-lmfuuid', '-lole32', '-lshlwapi']
+LIBS = ['-luser32', '-lgdi32', '-lwinmm', '-lmfplat', '-lmfreadwrite', '-lmfuuid', '-lole32', '-lshlwapi', '-ldxguid']
 if MINGW:
     HOST_FLAGS += ['-D_WIN32_WINNT=0x0A00']               # mingw-w64 defaults to 0x601 (Windows 7); the Windows SDK to 0x0A00
     # warning guard instead of a blanket -w (finding 100): -w hid "unknown attribute 'thread' ignored" (mingw-w64 turns

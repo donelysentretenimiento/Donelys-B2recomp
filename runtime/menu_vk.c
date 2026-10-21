@@ -274,7 +274,17 @@ static void rows_build(void) {
         snprintf(v, sizeof v, "%d fps", g->frame_rate ? g->frame_rate : 60); row(0, 1, g->frame_rate > 60 ? 3 : 1, "Objetivo", v, g->frame_rate > 60 ? "Por encima de 60 algunos temporizadores del juego cambian." : "La velocidad original del juego.");
         snprintf(v, sizeof v, "%s", g->aniso ? (g->aniso == 16 ? "16x" : g->aniso == 8 ? "8x" : g->aniso == 4 ? "4x" : "2x") : "del juego"); row(0, 1, 0, "Filtrado anisotrópico", v, NULL);
         snprintf(v, sizeof v, "%s · Vulkan %u.%u", V.props.deviceName, VK_API_VERSION_MAJOR(V.props.apiVersion), VK_API_VERSION_MINOR(V.props.apiVersion)); row(0, 1, 0, "GPU", v, NULL);
-        row(0, 1, 0, "Cambiar ajustes", "En el launcher", "Los ajustes gráficos se cambian en B2recomp.exe y se aplican al reiniciar el juego.");
+        {   static const char *const hm[] = {"Desactivado", "Automático", "HDR10", "scRGB"};
+            hdr_cfg_init();
+            row(1, 1, H.cfg.mode ? 1 : 0, "HDR · modo pedido", hm[H.cfg.mode & 3], "Cambia en vivo (se rehace la presentación). Necesita HDR activado en Windows para este monitor.");
+            row(0, 1, H.active ? 1 : 3, "HDR · modo real", H.active ? H.shown : H.cfg.mode ? "SDR (HDR no disponible)" : "SDR", H.cfg.mode && !H.active ? "Windows no tiene HDR activo en este monitor, o la pantalla no ofrece el formato." : "Es la imagen SDR del juego convertida; no es el HDR interno del motor.");
+            if (H.cfg.sdr_white) snprintf(v, sizeof v, "%d nits", H.cfg.sdr_white); else snprintf(v, sizeof v, "Windows (%.0f nits)", hdr_sdr_white());
+            row(1, 1, 0, "HDR · blanco SDR", v, "Brillo del blanco de la imagen normal. Automático = el deslizador «Brillo del contenido SDR» de Windows.");
+            if (H.cfg.peak) snprintf(v, sizeof v, "%d nits", H.cfg.peak); else snprintf(v, sizeof v, "Monitor (%.0f nits)", hdr_peak());
+            row(1, 1, 0, "HDR · pico de luminancia", v, "Máximo que puede alcanzar la expansión de altas luces.");
+            snprintf(v, sizeof v, "%d %%", H.cfg.expand); row(1, 1, H.cfg.expand ? 3 : 0, "HDR · expansión de luces", v, "Opcional: realza las zonas claras de la imagen SDR. 0 % = fiel al original.");
+        }
+        row(0, 1, 0, "Cambiar ajustes", "En el launcher", "Los ajustes gráficos se guardan en B2recomp.exe; los de HDR de este menú valen hasta cerrar el juego.");
         break; }
     case MC_MODS:
         snprintf(v, sizeof v, "%d activados", M.mods_on); row(0, 1, 0, "Mods", v, "Leídos al arrancar el juego. Para cambiarlos: launcher > Mods... (perfiles incluidos).");
@@ -336,6 +346,13 @@ static void menu_change(int delta) {
             M.weapon = n;
             menu_say("Arma de la ranura A: %s.", k_weapons[n].name);
         }
+    } else if (M.cat == MC_GRAFICOS && M.row >= 7 && M.row <= 11) {         /* HDR rows (rows_build): mode, (real mode), SDR white, peak, expansion */
+        int *p = M.row == 7 ? &H.cfg.mode : M.row == 9 ? &H.cfg.sdr_white : M.row == 10 ? &H.cfg.peak : &H.cfg.expand;
+        if (M.row == 7) *p = (*p + delta + 4) % 4;
+        else if (M.row == 9) { int w = (int)hdr_sdr_white() + delta * 10; *p = w < 80 ? 0 : w > 500 ? 500 : w; }
+        else if (M.row == 10) { int w = (int)hdr_peak() + delta * 100; *p = w < 400 ? 0 : w > 10000 ? 10000 : w; }
+        else { int w = *p + delta * 10; *p = w < 0 ? 0 : w > 100 ? 100 : w; }
+        menu_say("%s cambiado.", g_rows[M.row].label);
     } else if (M.cat == MC_TRUCOS && M.cheat) {
         if (M.row == 0) M.cheat[1] = !M.cheat[1];
         else if (M.row == 1) M.cheat[2] = !M.cheat[2];
@@ -596,13 +613,13 @@ static int menu_vk_texture(int w, int h) {                 /* the sampled image 
 }
 static VkImageView menu_sc_view(uint32_t index) {
     if (index >= 16) return NULL;
-    if (MV.sc_img[index] != V.images[index] && MV.sc_view[index]) { vkDestroyImageView(V.device, MV.sc_view[index], NULL); MV.sc_view[index] = NULL; }
+    if (MV.sc_img[index] != V.tgt[index] && MV.sc_view[index]) { vkDestroyImageView(V.device, MV.sc_view[index], NULL); MV.sc_view[index] = NULL; }
     if (!MV.sc_view[index]) {
         VkImageViewCreateInfo vc = {VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO};
-        vc.image = V.images[index]; vc.viewType = VK_IMAGE_VIEW_TYPE_2D; vc.format = V.format.format;
+        vc.image = V.tgt[index]; vc.viewType = VK_IMAGE_VIEW_TYPE_2D; vc.format = V.format.format;
         vc.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; vc.subresourceRange.levelCount = 1; vc.subresourceRange.layerCount = 1;
         if (vkCreateImageView(V.device, &vc, NULL, &MV.sc_view[index]) != VK_SUCCESS) return NULL;
-        MV.sc_img[index] = V.images[index];
+        MV.sc_img[index] = V.tgt[index];
     }
     return MV.sc_view[index];
 }
@@ -648,7 +665,7 @@ static void menu_vk_draw(uint32_t index) {
         image_barrier(MV.img, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
         MV.layout_ready = 1; M.dirty = 0;
     }
-    image_barrier(V.images[index], VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+    image_barrier(V.tgt[index], VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
     VkRenderingAttachmentInfo ca = {VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO};
     ca.imageView = view; ca.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL; ca.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD; ca.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     VkRenderingInfo ri = {VK_STRUCTURE_TYPE_RENDERING_INFO};
@@ -664,6 +681,6 @@ static void menu_vk_draw(uint32_t index) {
     vkCmdPushConstants(R.cmd, MV.pl, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof pcv, pcv);
     vkCmdDraw(R.cmd, 3, 1, 0, 0);
     vkCmdEndRendering(R.cmd);
-    image_barrier(V.images[index], VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    image_barrier(V.tgt[index], VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
     R.pipe_bound = NULL; R.dyn_dirty = 1;                  /* the game's own state tracking must bind again */
 }

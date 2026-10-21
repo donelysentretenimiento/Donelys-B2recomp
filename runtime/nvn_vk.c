@@ -110,6 +110,7 @@ static struct {
     VkPresentModeKHR mode;
     VkExtent2D extent;
     VkImage images[16];
+    VkImage tgt[16];                 /* edicion mejorada, HDR (hdr_vk.c): where the picture is composed = images[i] in SDR, an 8-bit image of its own in HDR */
     uint32_t image_count;
     VkCommandPool pool;
     VkCommandBuffer cmd;
@@ -179,11 +180,17 @@ static int has_name(const VkExtensionProperties *e, uint32_t n, const char *name
 /* ---------------------------------------------------------------- swapchain */
 static void wait_last_submit(void);
 static void menu_vk_forget(void);                        /* menu_vk.c: its views of the swapchain images */
+static int g_hdr_has_metadata;                           /* hdr_vk.c: VK_EXT_hdr_metadata was enabled on the device */
+static int hdr_choose(VkSurfaceFormatKHR *out);          /* hdr_vk.c: the HDR swapchain format when HDR is to be used */
+static int hdr_swapchain_made(void);
+static void hdr_swapchain_gone(void);
+static void hdr_fail(const char *why);
 static void swapchain_destroy(void) {
     if (!V.swapchain) return;
     wait_last_submit();                                  /* also resets the fence for the next submit */
     vkDeviceWaitIdle(V.device);
     menu_vk_forget();
+    hdr_swapchain_gone();
     vkDestroySwapchainKHR(V.device, V.swapchain, NULL);
     V.swapchain = NULL; V.image_count = 0;
 }
@@ -206,7 +213,9 @@ static int swapchain_create(void) {
     ci.surface = V.surface;
     ci.minImageCount = caps.minImageCount + 1 < 3 ? 3 : caps.minImageCount + 1;
     if (caps.maxImageCount && ci.minImageCount > caps.maxImageCount) ci.minImageCount = caps.maxImageCount;
-    ci.imageFormat = V.format.format; ci.imageColorSpace = V.format.colorSpace;
+    VkSurfaceFormatKHR sf = V.format;
+    int hdr = hdr_choose(&sf);                           /* HDR10 / scRGB when asked for, offered and Windows has HDR on; else sf stays the SDR format */
+    ci.imageFormat = sf.format; ci.imageColorSpace = sf.colorSpace;
     ci.imageExtent = ext;
     ci.imageArrayLayers = 1;
     ci.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
@@ -216,11 +225,17 @@ static int swapchain_create(void) {
     ci.presentMode = V.mode;
     ci.clipped = VK_TRUE;
     r = vkCreateSwapchainKHR(V.device, &ci, NULL, &V.swapchain);
+    if (r != VK_SUCCESS && hdr) { V.swapchain = NULL; hdr_fail("vkCreateSwapchainKHR refused the HDR format"); return swapchain_create(); }
     if (r != VK_SUCCESS) vk_fatal("vkCreateSwapchainKHR", r);
     V.image_count = 16;
     r = vkGetSwapchainImagesKHR(V.device, V.swapchain, &V.image_count, V.images);
     if (r != VK_SUCCESS && r != VK_INCOMPLETE) vk_fatal("vkGetSwapchainImagesKHR", r);
     V.extent = ext;
+    if (!hdr_swapchain_made()) {                         /* the images of the HDR path could not be made: this swapchain goes, an SDR one comes */
+        vkDeviceWaitIdle(V.device); vkDestroySwapchainKHR(V.device, V.swapchain, NULL); V.swapchain = NULL; V.image_count = 0;
+        hdr_fail("the images of the conversion pass could not be made");
+        return swapchain_create();
+    }
     return 1;
 }
 /* Edición mejorada (issues #22, #15): a present or acquire answered SUBOPTIMAL made the swapchain go and come back, with a
@@ -267,10 +282,11 @@ int nvn_vk_init(void *hwnd) {
     uint32_t niext = 128;
     r = vkEnumerateInstanceExtensionProperties(NULL, &niext, iext);
     if (r != VK_SUCCESS && r != VK_INCOMPLETE) vk_fatal("vkEnumerateInstanceExtensionProperties", r);
-    const char *exts[4], *layers[1];
+    const char *exts[5], *layers[1];
     uint32_t next = 0, nlayers = 0;
     exts[next++] = "VK_KHR_surface"; exts[next++] = "VK_KHR_win32_surface";
     if (!has_name(iext, niext, "VK_KHR_surface") || !has_name(iext, niext, "VK_KHR_win32_surface")) { printf("nvn_vk: the Vulkan loader has no VK_KHR_surface / VK_KHR_win32_surface\n"); fflush(stdout); ExitProcess(5); }
+    if ((gfx_options()->hdr_mode || getenv("SSBU_HDR")) && has_name(iext, niext, "VK_EXT_swapchain_colorspace")) exts[next++] = "VK_EXT_swapchain_colorspace";      /* HDR10 / scRGB colour spaces (hdr_vk.c) */
     { const char *e = getenv("SSBU_VK_VALIDATE"); V.validate = e && atoi(e) != 0; }
     if (V.validate) {
         static VkLayerProperties lp[64];
