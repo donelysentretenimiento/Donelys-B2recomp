@@ -136,3 +136,22 @@
 # ---- 10. exceptions to rule 9 (a later rule wins): checked files only
 # numbers of the standard test run (fps, CPU ms, margins, run names); no game strings, no images
 !/tests/bench_baseline.json
+
+# ---- 11. Donelys-B2recomp (edicion mejorada): archivos propios que se publican
+# Nunca se publican los mods de terceros ni sus descargas (rige la regla 1 y las de arriba)
+!/scripts/cheats_patch.py
+!/tools/mods/
+!/tools/mods/*.py
+!/config/perfiles/
+!/config/perfiles/*.ini
+!/docs/edicion-mejorada/
+!/docs/edicion-mejorada/*.csv
+!/README.upstream.md
+!/CHANGELOG.md
+!/CREDITOS_Y_AUTORIA.md
+!/REPARACIONES_REALIZADAS.md
+!/EVIDENCIAS_Y_CRONOLOGIA.md
+!/GUIA_COMPILACION.md
+!/ESTADO_DEL_PROYECTO.md
+!/docs/autoría-y-contribuciones/
+!/docs/autoría-y-contribuciones/**
