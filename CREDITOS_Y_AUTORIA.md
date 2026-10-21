@@ -18,6 +18,8 @@ Las herramientas de ingeniería inversa y de compilación que usa el proyecto (G
 | Archivo | Qué es |
 |---|---|
 | `runtime/menu_vk.c` | Menú dentro del juego y trucos de datos |
+| `runtime/hdr_vk.c`, `runtime/hdr_win.c`, `runtime/hdr_win.h`, `runtime/hdr_color.h`, `runtime/hdr_selftest.inc` | Salida HDR10 / scRGB, detección de HDR de Windows y colorimetría |
+| `tests/hdr_color_test.c`, `tests/hdr_probe.c`, `scripts/hdr_run.ps1`, `scripts/test_hdr_color.bat` | Pruebas y sondas del HDR |
 | `scripts/cheats_patch.py` | Inserta los interruptores de trucos en el C traducido |
 | `tools/mods/biblioteca.py` | Biblioteca de mods, fichas, fusiones y perfiles |
 | `config/perfiles/*.ini` | Los cinco perfiles de mods |

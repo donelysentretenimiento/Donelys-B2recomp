@@ -5,6 +5,7 @@ Todos los cambios de esta edición sobre **B2recomp v0.2.7** (commit `b3a6dc6`, 
 ## [Sin versionar] — 2026-10-21
 
 ### Añadido
+- **HDR nativo (HDR10 y scRGB)**: `runtime/hdr_vk.c`, `runtime/hdr_win.c`, `runtime/hdr_color.h`. Un pase de pantalla completa convierte la imagen SDR del juego al formato HDR de la swapchain; detecta el estado HDR de Windows, el pico del monitor y el blanco SDR; vuelve al SDR si algo falla. Opciones `hdr`, `hdr_sdr_white`, `hdr_peak` y `hdr_expand` en `graphics.ini`, filas en el menú Insert y ventana **HDR y color avanzado...** en el launcher. Desactivado por defecto. Pruebas: `tests/hdr_color_test.c` (34 comprobaciones) y autotest en la GPU (`SSBU_HDR_SELFTEST=1`). **Pendiente de validación visual.**
 - **Biblioteca de mods** (`fa1ce2c`, 14:31): `tools/mods/biblioteca.py` monta la carpeta `mods\` a partir de las descargas sin tocar los originales, genera fichas `mod.ini`, fusiona los `.csv` de combos de forma segura (solo valores `ATK_`) y escribe un inventario con SHA-256 de cada archivo.
 - **Perfiles de mods** (`fa1ce2c`): cinco perfiles en `config/perfiles/` y selector «Cargar perfil» en la ventana **Mods...** del launcher.
 - **Fichas y conflictos en la ventana Mods...** (`fa1ce2c`): `scripts/pchtxt.py tree` etiqueta cada mod con categoría y versión y marca en rojo los conflictos por ruta idéntica entre mods activados.
