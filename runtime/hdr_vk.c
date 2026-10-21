@@ -230,6 +230,7 @@ static int hdr_poll(void) {
     HdrWinInfo w; hdr_win_query(V.hwnd, &w);
     if (!w.ok) return 0;
     H.win.sdr_white_nits = w.sdr_white_nits;                          /* the slider in Windows' settings: followed live */
+    if (w.max_nits > 0) { H.win.max_nits = w.max_nits; H.win.min_nits = w.min_nits; }      /* the window moved to another monitor: its peak (used by the expansion) */
     return (w.hdr_on != 0) != (H.win_on_at_make != 0);
 }
 
