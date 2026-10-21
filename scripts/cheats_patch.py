@@ -16,17 +16,17 @@ reasoning: docs/edicion-mejorada/TRUCOS.md.
 The edit is idempotent (a file that has the mark is left alone) and fps_patch.py --inplace, run before, restores the
 lifter's text of the files it patches, so running the lift step again gives the same result.
 """
-import os, sys
+import os, re, sys
 
 MARK = '/* [cheats_patch.py] edición mejorada */'
 HEAD = MARK + '\nextern volatile int recomps_cheat[16];\n'
 HOOKS = [   # (label of the instruction, code put before it)
     ('L_710001c974:',
-     '{ int m_ = recomps_cheat[0]; if (m_ >= 2) { uint64_t p_ = c->x[8]; wr32(p_, 1u); wr32(p_ + 0x1cULL, 0x42f00000u); '
+     'recomps_cheat[13]++; { int m_ = recomps_cheat[0]; if (m_ >= 2) { uint64_t p_ = c->x[8]; wr32(p_, 1u); wr32(p_ + 0x1cULL, 0x42f00000u); '
      'wr32(p_ + 0x10ULL, m_ == 3 ? 0x3dcccccdu : 0x38d1b717u); wr32(p_ + 0x14ULL, 0x40000000u); goto L_710001c978; } '
      'if (m_ == 1) goto L_710001c978; }'),
-    ('L_710001d5cc:', 'if (recomps_cheat[1]) goto L_710001d5d0;'),
-    ('L_7100020c14:', 'if (recomps_cheat[2]) return;'),
+    ('L_710001d5cc:', 'recomps_cheat[14]++; if (recomps_cheat[1]) goto L_710001d5d0;'),
+    ('L_7100020c14:', 'recomps_cheat[15]++; if (recomps_cheat[2]) return;'),
 ]
 
 
@@ -43,10 +43,9 @@ def main():
         hits = [lab for lab in todo if '\n' + lab + ' ' in text]
         if not hits:
             continue
-        if MARK in text:                                   # patched already (an earlier run): nothing to do
-            for lab in hits:
-                print('%s: %s already patched' % (name, lab)); del todo[lab]
-            continue
+        if MARK in text:                                   # an earlier run (maybe an older version): take it out, then patch again
+            text = text.replace(HEAD, '', 1)
+            text = re.sub(r'^(?:recomps_cheat\[|\{ int m_ = recomps_cheat|if \(recomps_cheat\[).*\n(?=L_[0-9a-f]+: )', '', text, flags=re.M)
         for lab in hits:
             assert text.count('\n' + lab + ' ') == 1, lab
             text = text.replace('\n' + lab + ' ', '\n' + todo.pop(lab) + '\n' + lab + ' ', 1)

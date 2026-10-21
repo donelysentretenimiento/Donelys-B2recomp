@@ -315,6 +315,9 @@ static void poke_restore(const MChoice *c, uint8_t *saved, int *have) {
     *have = 0;
 }
 static void menu_cheats_frame(void) {          /* every present: the data cheats, as Atmosphere's cheat VM rewrites them */
+    static LONG64 next_hits; static int last[3];       /* how often the game ran the three hooked places (cheats_patch.py counters 13..15) */
+    if (M.cheat && (LONG64)GetTickCount64() >= next_hits) { next_hits = (LONG64)GetTickCount64() + 5000;
+        if (M.cheat[13] != last[0] || M.cheat[14] != last[1] || M.cheat[15] != last[2]) { printf("menu: trucos: el juego paso por 0x1c974 %d, 0x1d5cc %d, 0x20c14 %d veces\n", M.cheat[13], M.cheat[14], M.cheat[15]); fflush(stdout); last[0] = M.cheat[13]; last[1] = M.cheat[14]; last[2] = M.cheat[15]; } }
     if (M.character) poke_apply(&k_chars[M.character], M.saved_char, &M.have_saved_char);
     if (M.weapon && M.character != 1 && M.character != 2) poke_apply(&k_weapons[M.weapon], M.saved_weap, &M.have_saved_weap);
 }
