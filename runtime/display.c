@@ -8,6 +8,24 @@
 #include "runtime.h"
 #include "hostrt.h"
 #include "gfx_options.h"
+/* graphics.ini monitor: "n" = \.\DISPLAYn, or a device name; on a match *origin is the monitor's top-left corner and 1 is returned */
+typedef struct { char want[40]; RECT rc; int found; } MonPick;
+static BOOL CALLBACK mon_pick_cb(HMONITOR m, HDC dc, LPRECT rc, LPARAM l) {
+    MonPick *p = (MonPick *)l; MONITORINFOEXA mi; (void)dc; (void)rc;
+    mi.cbSize = sizeof mi;
+    if (GetMonitorInfoA(m, (MONITORINFO *)&mi) && !_stricmp(mi.szDevice, p->want)) { p->rc = mi.rcMonitor; p->found = 1; }
+    return TRUE;
+}
+static int pick_monitor(const char *s, POINT *origin) {
+    MonPick p; memset(&p, 0, sizeof p);
+    if (!s || !s[0]) return 0;
+    if (s[strspn(s, "0123456789")] == 0) snprintf(p.want, sizeof p.want, "\\\\.\\DISPLAY%d", atoi(s)); else snprintf(p.want, sizeof p.want, "%s", s);
+    EnumDisplayMonitors(NULL, NULL, mon_pick_cb, (LPARAM)&p);
+    if (!p.found) { printf("display: graphics.ini monitor = %s: no such monitor, the primary one is used\n", s); return 0; }
+    origin->x = p.rc.left; origin->y = p.rc.top;
+    printf("display: graphics.ini monitor = %s: the window opens on %s\n", s, p.want);
+    return 1;
+}
 
 #define A0 (c->x[0])
 #define A1 (c->x[1])
@@ -395,12 +413,14 @@ static DWORD WINAPI window_thread(LPVOID arg) {
     DWORD style = go->window_mode ? WS_POPUP : WS_OVERLAPPEDWINDOW;
     int cw = go->width, ch = go->height, px = CW_USEDEFAULT, py = CW_USEDEFAULT;
     POINT origin = {0, 0};
+    int on_chosen = pick_monitor(go->monitor, &origin);      /* graphics.ini monitor = n: the window opens there (origin = that monitor's top left) */
     UINT dpi = dpi_of(MonitorFromPoint(origin, MONITOR_DEFAULTTOPRIMARY), 1);
     if (go->window_mode) {
         MONITORINFO mi;
         memset(&mi, 0, sizeof mi); mi.cbSize = sizeof mi;
         if (GetMonitorInfoA(MonitorFromPoint(origin, MONITOR_DEFAULTTOPRIMARY), &mi)) { cw = mi.rcMonitor.right - mi.rcMonitor.left; ch = mi.rcMonitor.bottom - mi.rcMonitor.top; px = mi.rcMonitor.left; py = mi.rcMonitor.top; }
     } else { cw = MulDiv(cw, (int)dpi, 96); ch = MulDiv(ch, (int)dpi, 96); }      /* finding 131: the size it had when Windows scaled it */
+    if (on_chosen && !go->window_mode) { px = origin.x + 80; py = origin.y + 80; }      /* windowed: near the top left of the chosen monitor */
     RECT r = {0, 0, cw, ch};
     adjust_rect(&r, style, dpi_of(MonitorFromPoint(origin, MONITOR_DEFAULTTOPRIMARY), 0));      /* the frame at the monitor's real scaling */
     printf("display: window %s, client %dx%d (graphics.ini; the screen's scaling %u %%%s)\n", go->window_mode == 2 ? "fullscreen (borderless, topmost)" : go->window_mode ? "borderless" : "windowed", cw, ch,

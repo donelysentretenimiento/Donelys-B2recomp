@@ -22,6 +22,7 @@ typedef struct {
     int hdr_mode;           /* 0 off (default: SDR exactly as before), 1 auto, 2 HDR10, 3 scRGB */
     int hdr_sdr_white;      /* nits that SDR white (the game's 100 % white) is shown at; 0 = ask Windows (its SDR content brightness slider) */
     int hdr_peak;           /* nits of the brightest highlight the optional expansion may reach; 0 = the monitor's reported peak */
+    char monitor[32];       /* monitor = auto | 1 | 2 | 3 | \.\DISPLAYn: where the window opens (display.c); auto = the primary monitor */
     int hdr_expand;         /* 0 = none (the SDR picture shown as it is, only converted), 100 = full highlight expansion */
 } GfxOptions;
 const GfxOptions *gfx_options(void);      /* any thread; read once (the file is written with defaults when it does not exist) */

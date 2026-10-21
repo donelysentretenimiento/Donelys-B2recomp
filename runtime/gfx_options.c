@@ -131,6 +131,11 @@ static const char *const k_default_ini =
 ";   auto still show each frame at once above 60 (no tearing: mailbox, else FIFO, which shows at most one frame per refresh).\r\n"
 "frame_rate = 60\r\n"
 "\r\n"
+"; monitor = auto | 1 | 2 | 3      (Vulkan, edicion mejorada)\r\n"
+";   Where the window opens. auto = the primary monitor. A number n = monitor \\.\\DISPLAYn (Windows numbers the monitors;\r\n"
+";   the \"hdr:\" line of the log names the one in use).\r\n"
+"monitor = auto\r\n"
+"\r\n"
 "; hdr = off | auto | hdr10 | scrgb      (Vulkan, edicion mejorada)\r\n"
 ";   off:   SDR, exactly as before. auto: HDR10, else scRGB, only when Windows has HDR on for the monitor of the window.\r\n"
 ";   hdr10: 10-bit PQ / Rec.2020.  scrgb: 16-bit float, linear. If the mode is not offered the game stays in SDR.\r\n"
@@ -211,6 +216,7 @@ static BOOL CALLBACK opt_load(PINIT_ONCE once, PVOID arg, PVOID *ctx) {
         else if (!_stricmp(key, "aspect")) o->aspect_stretch = !_stricmp(val, "stretch");      /* [Recomps#1] */
         else if (!_stricmp(key, "shader_prepare")) o->shader_prepare = !_stricmp(val, "background") ? 1 : !_stricmp(val, "off") ? 2 : 0;
         else if (!_stricmp(key, "frame_rate")) { int v = atoi(val); o->frame_rate = v < 60 ? 60 : v > 120 ? 120 : v; }      /* [Recomps#1] */
+        else if (!_stricmp(key, "monitor")) { if (_stricmp(val, "auto")) snprintf(o->monitor, sizeof o->monitor, "%s", val); }
         else if (!_stricmp(key, "hdr")) o->hdr_mode = !_stricmp(val, "auto") ? 1 : !_stricmp(val, "hdr10") ? 2 : !_stricmp(val, "scrgb") ? 3 : 0;
         else if (!_stricmp(key, "hdr_sdr_white")) { int v = atoi(val); o->hdr_sdr_white = v >= 80 && v <= 500 ? v : 0; }
         else if (!_stricmp(key, "hdr_peak")) { int v = atoi(val); o->hdr_peak = v >= 400 && v <= 10000 ? v : 0; }
