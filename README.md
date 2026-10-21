@@ -49,11 +49,19 @@ Se configura en el launcher (**HDR y color avanzado…**), en el menú del juego
 
 ### Menú dentro del juego
 
-**Insert** (o L3+R3 en mando): personaje, trucos de código de la versión 1.2, armas, gráficos, mods y diagnóstico en tiempo real.
+**Insert** (o L3+R3 en mando): personaje, armas, gráficos (incluido el HDR), mods y diagnóstico en tiempo real (FPS y tiempo de fotograma).
+
+### Trucos nativos (versión 1.2)
+
+Interruptores en tiempo real: salud infinita, invencibilidad, Witch Time permanente (tecla de acceso rápido opcional) y elección de personaje y arma de la ranura A. Se aplican como escrituras nativas y, al volver a «Normal», se restauran los valores originales. Se bloquean durante un combate para evitar cuelgues.
 
 ### Biblioteca de mods
 
-Fichas, detección de conflictos por ruta y perfiles, en la ventana **Mods…** del launcher.
+Monta la carpeta `mods\` desde tus descargas sin tocar los originales, genera fichas, fusiona de forma segura los `.csv` de combos, marca los **conflictos por ruta** y ofrece **cinco perfiles** (Juego original, Vanilla mejorado, Combate expandido, Contenido experimental, Bayonetta 3 Experience). Todo en la ventana **Mods…** del launcher.
+
+### Launcher con marca Donelys
+
+Mismo launcher de siempre, con cabecera y título de la edición, el crédito de origen siempre a la vista y los ajustes de HDR.
 
 El estado exacto de cada función está en [ESTADO_DEL_PROYECTO.md](ESTADO_DEL_PROYECTO.md).
 
