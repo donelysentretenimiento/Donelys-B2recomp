@@ -1,0 +1,172 @@
+﻿mod;ruta;bytes;sha256;sustituye (paquete del juego);misma ruta en
+DS4Prompts;ui/ui_core.dat;6818432;ac85f73fbe41e56f46a80b191f1e94ac04da694f4e93a2e829dd8ef7a7d9c0fd;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_core_de.dat;6818432;00909a5f6b196ad26bc2a339e90819e734a469d6142303654be2900e536a431b;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_core_es.dat;6818432;f468c9719b3929c6651f9a38f63a6ce94c7391ff07c9ca1816f91bd749693d2e;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_core_fr.dat;6818432;85d8827ab22d084c2e1033bf40b09796f55a6f9885245603fd069604d0b2adcb;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_core_it.dat;6818432;780cd3de3a3be50d327f38afba9c882e03a33b4a8898e0003593ebce666288f3;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_core_us.dat;6819424;ebf77d2d6edd4a3d5e644fb6e267346c1219ccef23006b7f99a7df311ed6d668;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_hud1.dat;6312848;32ffda5b9442e467f447e1cc70ebff2e74db680f20892bd87f26125c0b89d6f1;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_hud1_de.dat;6312848;acf645cb9a089c36fd35ed4bc01e820cd25a913e6eb4706db4d563228a4704bb;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_hud1_es.dat;6314800;ea9a1f8c235afa254e4dafee0eef6a08461fb69021fff08a5b90c35096615ecf;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_hud1_fr.dat;6314800;71f576e3f2e1d6915709c25918af7a2865cea1c4590a817d439e0b88d8d09e0f;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_hud1_it.dat;6312848;2e1ba23a66e8aaff2f276f11476217ffde3bfd479cfe4b1543e888a4678f421b;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_hud1_us.dat;6312848;0718a306b642626f5bf9e64bd6989655c88555de8e9ce0e5d7c49277b0a8b1d8;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_tutorial_01.dat;1191280;90b0d132e172b5b994fc8533fef2d1cb1b41043dcc71d9063e529025575c985f;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_tutorial_01_de.dat;1191280;90b0d132e172b5b994fc8533fef2d1cb1b41043dcc71d9063e529025575c985f;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_tutorial_01_es.dat;1191280;90b0d132e172b5b994fc8533fef2d1cb1b41043dcc71d9063e529025575c985f;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_tutorial_01_fr.dat;1191280;90b0d132e172b5b994fc8533fef2d1cb1b41043dcc71d9063e529025575c985f;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_tutorial_01_it.dat;1191280;90b0d132e172b5b994fc8533fef2d1cb1b41043dcc71d9063e529025575c985f;data000.cpk;XBOXPrompts
+DS4Prompts;ui/ui_tutorial_01_us.dat;1191280;90b0d132e172b5b994fc8533fef2d1cb1b41043dcc71d9063e529025575c985f;data000.cpk;XBOXPrompts
+XBOXPrompts;ui/ui_core.dat;6556288;f1235432ad2fa9562cfa31b09ef5fa232cccc05ba447fbf9f8c6a4b4ebb032eb;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_core_de.dat;6556288;74ad636dd380098454c63d6c17b2acead0e63773edf83bcc81d47d9646171916;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_core_es.dat;6818432;0ac1f791cda438528a383a7968ff1a50ea3dbb8536e938f1400bde1ca1dfa18a;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_core_fr.dat;6556288;9185bfad5d13fdfe505e2e815bed8b444c3116786eabeb7b4a959efc69ab4a50;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_core_it.dat;6556288;90292d652ff66d4a37dbe9d43e883b2e0bd71ac4168f6ac4b08ec818168e036a;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_core_us.dat;6557280;8765b4767d236990defe5aae3fad763cafbb0e1411a61dcaeb653528c479c8c5;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_hud1.dat;6312848;1bf756054f05e3d67b0467e2633fd78f9e388655ae81e473bbae786ca08824e7;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_hud1_de.dat;6312848;8a5c8531092461d712e8cdae4ebb82f990bc9579264c8a27a9cd103606e3a07f;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_hud1_es.dat;6314800;495204f719793cc54152a69ac4dd56645ed56fb06262b152b7d91d2fa138f130;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_hud1_fr.dat;6314800;18467887669f6746d4da0e51c510151e7a82d6bd100f4fecc54845129261f563;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_hud1_it.dat;6312848;55880c4d55e404b92bec5cf4f96db2d3ead4605dbf8b9f0ba0f2df685f8135d0;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_hud1_us.dat;6312848;e8e4d3a7241d32818d7641273c71da3e0313b05001f02061a2191cc610c043a0;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_tutorial_01.dat;1191280;90b0d132e172b5b994fc8533fef2d1cb1b41043dcc71d9063e529025575c985f;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_tutorial_01_de.dat;1191280;90b0d132e172b5b994fc8533fef2d1cb1b41043dcc71d9063e529025575c985f;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_tutorial_01_es.dat;1191280;90b0d132e172b5b994fc8533fef2d1cb1b41043dcc71d9063e529025575c985f;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_tutorial_01_fr.dat;1191280;90b0d132e172b5b994fc8533fef2d1cb1b41043dcc71d9063e529025575c985f;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_tutorial_01_it.dat;1191280;90b0d132e172b5b994fc8533fef2d1cb1b41043dcc71d9063e529025575c985f;data000.cpk;DS4Prompts
+XBOXPrompts;ui/ui_tutorial_01_us.dat;1191280;90b0d132e172b5b994fc8533fef2d1cb1b41043dcc71d9063e529025575c985f;data000.cpk;DS4Prompts
+A02 Witch of Genesis;es/es016d.dat;454656;4f3595c32d604dc2334b439ececfa4a864f48bab64ceb0dbb355e8e5e9a2b30d;data002.cpk;
+A02 Witch of Genesis;pl/pl0010.dat;16117760;8616d079b9145a0483560eadca2228571f993571ce43fafb6d99f98e942c2368;data000.cpk;A02b Witch of Genesis - Naive Angel
+A02 Witch of Genesis;pl/pl0011.dat;704512;d5fc2c2abf6658b349a17312f30f626bcea9ea4bb61064bc45e1629b2b9d3077;data000.cpk;
+A02 Witch of Genesis;pl/pl0012.dat;16384;04926fc7dc944f603edaa687166eb7b95b8d77baddb099bdd50e391077d80d30;data000.cpk;
+A02 Witch of Genesis;pl/pl0013.dat;4939776;f31ee3186a7c478d6f104812a318d000de849b2680a8268cecd033f45390e5aa;data000.cpk;A08 Bayonetta 1 Face
+A02 Witch of Genesis;pl/pl001a.dat;20480;90ee9f429ecf8e61bc928a54f240c8adcc9403fcd04922307afda2acb5778f55;data000.cpk;
+A02b Witch of Genesis - Naive Angel;pl/pl0010.dat;15421440;eb9d6e58fe767fcb3916058a7a04d2a2b360bf31510eb2cf7c72f966956b6ace;data000.cpk;A02 Witch of Genesis
+A03 One Eyed Witch;pl/pl0027.dat;4046848;e22f78a2dafd8b3d09f5ac5a012f622e702b81afe348d2a09f17ab3e08e7cfdb;data000.cpk;
+A03 One Eyed Witch;pl/pl004d.dat;8327168;d6f741209342eba6bce233126d1cb23f04d345c62a7822fb187ae56711877580;data000.cpk;
+A04 All 4 One;es/es0214.dat;1576960;520b47f4d99081d79cab708046396f53ea78d154d28c655963e722a6f160c251;data002.cpk;
+A04 All 4 One;es/es0215.dat;1458176;9c635b3b4fdc681ebccd8be0b1da2dfae123f5be9553898e913cc0ee460bb96d;data002.cpk;
+A04 All 4 One;pl/pl0224.dat;3485696;cdbcfcd5941e11cd447e8324a96d21d0dd59c8f1497f4bdb8cedba573f1d8a43;data000.cpk;
+A04 All 4 One;um/um102a.dat;2572288;cb6748e618a03792a0df0de1234aded497e95a25b2f6d51e172fda9e9c7ec63e;data003.cpk;
+A04 All 4 One;wp/wp002a.dat;4374528;d755aed79185249822b9abf3c59da9357d5fe81079b5333832e319f4e5407ae7;data000.cpk;
+A05 Prototype Bayonetta 1;pl/pl0020.dat;4861952;2c29cd9e3f1c28cb48f7bc0c5dc26da21b224b3d90e212eaf39fdeb07dc2e61f;data000.cpk;"A06 Soul Cereza B1; A06 Soul Cereza B2; A06 Soul Cereza B3"
+A05 Prototype Bayonetta 1;pl/pl0021.dat;7561216;ff5cde624e239c903049f25451fec328b5dcc2aaaf01d46e5ce5f32a7802f0cd;data000.cpk;"A06 Soul Cereza B1; A06 Soul Cereza B2; A06 Soul Cereza B3"
+A05 Prototype Bayonetta 1;pl/pl0022.dat;12288;828147bd2ba5d8f9155edf79a7cd05b83862e3d28680b45ccc783e3f912aa901;data000.cpk;"A06 Soul Cereza B1; A06 Soul Cereza B2; A06 Soul Cereza B3"
+A06 Soul Cereza B1;pl/pl0020.dat;2424832;f679a378aba7118505533d645c2dd82403f85e4d8af10fc18e970dd2892966ca;data000.cpk;"A05 Prototype Bayonetta 1; A06 Soul Cereza B2; A06 Soul Cereza B3"
+A06 Soul Cereza B1;pl/pl0021.dat;3059712;86fbb499a50902e4240b2d923a05b28b931bb8c6769a870b563421716329848b;data000.cpk;"A05 Prototype Bayonetta 1; A06 Soul Cereza B2; A06 Soul Cereza B3"
+A06 Soul Cereza B1;pl/pl0022.dat;12288;7eb8efce92806af00a5139b96b22be115a3693b0703decf66a3de402b5489a63;data000.cpk;"A05 Prototype Bayonetta 1; A06 Soul Cereza B2; A06 Soul Cereza B3"
+A06 Soul Cereza B1;pl/pl022b.dat;2576384;bca40f42a8e34997b8cd369217c0adf6af616e49c0ad5594be743a3d978d3bbf;data000.cpk;"A06 Soul Cereza B2; A06 Soul Cereza B3; A06 Soul Rosa"
+A06 Soul Cereza B2;pl/pl0020.dat;2600960;aafeeeb9636aaae486fd79011bf30356aa83afc977c14a956ee09f2e1c193d7b;data000.cpk;"A05 Prototype Bayonetta 1; A06 Soul Cereza B1; A06 Soul Cereza B3"
+A06 Soul Cereza B2;pl/pl0021.dat;3518464;0b8840538bfffbf28825f9b2431dae7d697d09385a2b3fa8afd91971b20246fc;data000.cpk;"A05 Prototype Bayonetta 1; A06 Soul Cereza B1; A06 Soul Cereza B3"
+A06 Soul Cereza B2;pl/pl0022.dat;12288;7eb8efce92806af00a5139b96b22be115a3693b0703decf66a3de402b5489a63;data000.cpk;"A05 Prototype Bayonetta 1; A06 Soul Cereza B1; A06 Soul Cereza B3"
+A06 Soul Cereza B2;pl/pl022b.dat;3031040;a16fa00df0e7546124cf152e54e7b98ad83ab8dbfc56bdc13b3add3e6c72ae4a;data000.cpk;"A06 Soul Cereza B1; A06 Soul Cereza B3; A06 Soul Rosa"
+A06 Soul Cereza B3;pl/pl0020.dat;3092480;749de5953680e06ffba795a3fe8b934e5d0144ba208518b155efdfe312d949a6;data000.cpk;"A05 Prototype Bayonetta 1; A06 Soul Cereza B1; A06 Soul Cereza B2"
+A06 Soul Cereza B3;pl/pl0021.dat;6111232;836dafadd2f8028f495db8817713551ae9fed6c7447f84dea416f98b218bf766;data000.cpk;"A05 Prototype Bayonetta 1; A06 Soul Cereza B1; A06 Soul Cereza B2"
+A06 Soul Cereza B3;pl/pl0022.dat;12288;7eb8efce92806af00a5139b96b22be115a3693b0703decf66a3de402b5489a63;data000.cpk;"A05 Prototype Bayonetta 1; A06 Soul Cereza B1; A06 Soul Cereza B2"
+A06 Soul Cereza B3;pl/pl022b.dat;6000640;d6a5fe238520f5d6e977b3b673b153a937ea83fee95235182a3f42502bfd43ce;data000.cpk;"A06 Soul Cereza B1; A06 Soul Cereza B2; A06 Soul Rosa"
+A06 Soul Jeanne B1;pl/pl00a0.dat;2326528;067c57dbb923c2109e609c03c8857ec71fe0f9a8ff5a62a2472a6984ca79ab8f;data000.cpk;A06 Soul Jeanne B3
+A06 Soul Jeanne B1;pl/pl00a1.dat;4423680;bbb8f9315d695fa0b1e322e0c12df4399b77bd482a03bb02c489c2b6d66d6b29;data000.cpk;A06 Soul Jeanne B3
+A06 Soul Jeanne B1;pl/pl0222.dat;4358144;54d3be1500444ffbd2cf356249e1bbe4e7d99b9ded151478a9b5c9373f4cfa1e;data000.cpk;"A06 Soul Jeanne B2; A06 Soul Jeanne B3"
+A06 Soul Jeanne B1;pl/pl024c.dat;4349952;b9d4237756f46875f7f2516e77f67598a3640b50c0fe937d18832990e016511a;data000.cpk;"A06 Soul Jeanne B2; A06 Soul Jeanne B3"
+A06 Soul Jeanne B2;pl/pl0060.dat;2617344;92d5fe2cf06478bf7973fd9be92b987abe6bc22c859a5d1b3677fd367c67f1cc;data000.cpk;A07 Platinum Witch
+A06 Soul Jeanne B2;pl/pl0061.dat;4599808;8e545bf242e6d58abb1b47bd63e0eafcf3e9f206bf4ca2d8bcbcc4f456d37f94;data000.cpk;A07 Platinum Witch
+A06 Soul Jeanne B2;pl/pl0222.dat;4587520;c615daf99f4b8b2c78f4f8620b4899d8b376b42effd4287f9467c6894ee4ddba;data000.cpk;"A06 Soul Jeanne B1; A06 Soul Jeanne B3"
+A06 Soul Jeanne B2;pl/pl024c.dat;4526080;614d986ab2591ff6bb1dce0f2652247b83ea6568e23570bf6d957c0a14591d3b;data000.cpk;"A06 Soul Jeanne B1; A06 Soul Jeanne B3"
+A06 Soul Jeanne B3;pl/pl00a0.dat;3948544;222defa84152ccc14f485543dd5f017ab863fee15c1f1c6ce4530649cbf69891;data000.cpk;A06 Soul Jeanne B1
+A06 Soul Jeanne B3;pl/pl00a1.dat;6205440;e7f2008c1019824dc98a9a848696db7ffd0aec467515e6ab60aca293a16e94d6;data000.cpk;A06 Soul Jeanne B1
+A06 Soul Jeanne B3;pl/pl0222.dat;6135808;32a83a4f21e06fe10ad379f2b1e87491cd1b04923ed3d1bd37e593765e393bf2;data000.cpk;"A06 Soul Jeanne B1; A06 Soul Jeanne B2"
+A06 Soul Jeanne B3;pl/pl024c.dat;6131712;be9e5b07f345ba0e3a5ba69c3c3ac4cdad8771f97f7149823f6d770c1a512407;data000.cpk;"A06 Soul Jeanne B1; A06 Soul Jeanne B2"
+A06 Soul Rosa;es/es0921.dat;3899392;d05b77c80638c9a6bba54d29237cee0a5fa96f3d812ed6d496ed87a77ff29f21;data002.cpk;
+A06 Soul Rosa;es/es0961.dat;479232;ec56e3a8df7213a4906bbfbac8e377cf569505c47929f69dc8e995e8684c1a1d;data002.cpk;
+A06 Soul Rosa;pl/pl0080.dat;2830336;abf1e04168551054c51e7586ee72d3d4737cc1f1e80f15e9ac84a9a832aa7545;data000.cpk;
+A06 Soul Rosa;pl/pl0081.dat;4349952;916b11ee902e42962a8a1b07c6317e4f88d2b61d820fa70293cd78471abf4e58;data000.cpk;
+A06 Soul Rosa;pl/pl022b.dat;3899392;462c65594c6dd82613e8f84293cc5358d4d3c5c9b811c6c38adc324da6ebfb54;data000.cpk;"A06 Soul Cereza B1; A06 Soul Cereza B2; A06 Soul Cereza B3"
+A06 Soul Rosa;pl/pl0240.dat;3039232;e4bdd453baf3434fa400165b1e59f2a7acdb37780517df575db68c3017a8daa5;data000.cpk;
+A06 Soul Rosa;pl/pl0241.dat;4349952;bdfb72dabb6b0b6039202ef7c2675e0fd936f856d61dca1d8edb2f7061482a7c;data000.cpk;
+A06 Soul Rosa;pl/pl024a.dat;5824512;17c9874179e56a1291691c15081c8168f69803dc052b07540f41741384f8a077;data000.cpk;
+A07 Platinum Witch;pl/pl0060.dat;8339456;f7600ce446d1847a2e287c25e83ed698ac0ffed90ca180e5c50e47252b358d06;data000.cpk;A06 Soul Jeanne B2
+A07 Platinum Witch;pl/pl0061.dat;1187840;13c96184c0bfcf6b65735b35912e02447d627bb9f2efb91221ac4296d8fe7dc9;data000.cpk;A06 Soul Jeanne B2
+A07 Platinum Witch;pl/pl0220.dat;8503296;c556951c5b9168aac31fefc8b46870e4ef145e8daf1ea74e55b44602f966ed4f;data000.cpk;
+A07 Platinum Witch;pl/pl0223.dat;3125248;de345858f2596eee5a1258ceef9308ec15250ab80f1f60617726a1fcd4928629;data000.cpk;
+A07 Platinum Witch;um/umc100.dat;8347648;57fa15cae151a8535aa1f26141113c11bcb89dee2b640ff7533fdf0976e926aa;data003.cpk;
+A07 Platinum Witch;um/umc104.dat;8347648;57fa15cae151a8535aa1f26141113c11bcb89dee2b640ff7533fdf0976e926aa;data003.cpk;
+A07 Platinum Witch;um/umc132.dat;8355840;f3fb08155e13885d5e737121f7ed978933cb30f904a4582787a2cd20d29299b6;data003.cpk;
+A08 Bayonetta 1 Face;pl/pl0013.dat;2543616;a452bdb73c7db88ba3826ba1d1cb2e537dc668201107b5d36e405ae04b81807c;data000.cpk;A02 Witch of Genesis
+B01 Longer Witch Time;exefs/1.2.0.pchtxt;141;9801b558518fb43c058df032f91f499fd83d68d739072f78978bcf5ef3ce8496;código (main);
+B02 Colour My World V9;pl/pl001f.dat;38383616;6ab0dab431fc763995b560d5eb8a0e0502021baff74cef44f95725dcd67bbd23;data000.cpk;
+B02 Colour My World V9;pl/plcombo_0000.csv;17810;36527cfe055ef0cadc9f5f2ea3cc9eb807e0657baadd48c4b33457d8dfc7ab0c;data000.cpk;"B04 Buffed Weapons; Z1 Fusion Buffed + CMW"
+B03 CMW Gun Recolor;wp/wp0000.dat;3977216;82b54b193b8dd4d1f25ca36050b93c8f04acd0ad970c434ecfc33b3b65f1e22c;data000.cpk;B07 Scarborough Fair over LiB
+B04 Buffed Weapons;et/et0050.dat;3958456;53685b5fded8ec68d1beaac05d0e94e802c9160393be6f55da8a8bc6def1bfdd;data000.cpk;
+B04 Buffed Weapons;et/et0057.dat;444979;6b11d1ab791d686f43f5c6a93419bad556b31b05ef62ec445acad1641bd6e472;data000.cpk;
+B04 Buffed Weapons;et/et0058.dat;210300;c0bbbe4f14e955342b599a4378b45005fe2b94e80dd4646a06aff260d8d7ef76;data000.cpk;
+B04 Buffed Weapons;et/et0059.dat;243068;9aa6f700ec780de97e7afc888542880b3fc4b741cf7597d35f34ac3739ad8ae1;data000.cpk;
+B04 Buffed Weapons;et/et005f.dat;2837823;0eb8e166da7ab22deed1863e59cdf1dd44dd11945cfb44c723689cbd1b5878cd;data000.cpk;
+B04 Buffed Weapons;et/et0062.dat;757436;e670827fed30fe883ad9f34e98a009b41031a884fd5224a195cef6f2f6cd5cd4;data000.cpk;
+B04 Buffed Weapons;et/et0063.dat;670460;d8217cd24ad3446f1051f94c25d51487343e51d57c23dde0cb56a573e72b1b85;data000.cpk;
+B04 Buffed Weapons;et/et0064.dat;756158;2080e1be2434317960330812cf515dc06529d2af27465f48adcf13457e07ff0d;data000.cpk;
+B04 Buffed Weapons;et/et0069.dat;8436408;b336d19799b1cc159eb769958691d0a0c609f9e0dbf20c62ed59c8ce8199c263;data000.cpk;
+B04 Buffed Weapons;et/et006a.dat;2795839;e19ebc7caa0900e7cb9c265c26554a952bc0424f710a2ef7b95cb51a2fe80ebf;data000.cpk;
+B04 Buffed Weapons;et/et006b.dat;705212;0f0c73841f41898d55dc3c4c4962c57342bf5d7f4c1fcb46f494b50c11deb0a6;data000.cpk;
+B04 Buffed Weapons;et/et006c.dat;445180;9bbf8d9ca893ea06703587ef1e5c3c4380c9cf86860504828da14bf4cc31a07e;data000.cpk;
+B04 Buffed Weapons;et/et006e.dat;2599264;68a4a8404e4a36fa4ec4b04901e7dd42554e883f28dc830e8d4e3596878e8937;data000.cpk;
+B04 Buffed Weapons;et/et0071.dat;2240440;21a7c92147d72043214ae6ad4a3ffb61cec5f90c22f7d9e3c036e8997f828b12;data000.cpk;
+B04 Buffed Weapons;et/et0073.dat;3904184;ae838bd941dc0a424f3947dd37a1bbb4b53d0aa1c924256136198d5cd50029b0;data000.cpk;
+B04 Buffed Weapons;et/et0074.dat;3875768;ed1c799148b0531fd1ab8a8890116bfa9b2e098bad42043dfd597b92c3517536;data000.cpk;
+B04 Buffed Weapons;et/et0076.dat;3895807;d167f6b2d0a13ea7a53ebd5e1f402bb233bc15b27cb377b9e40c9502e7a1ea51;data000.cpk;
+B04 Buffed Weapons;et/et0077.dat;3737151;d3d80e38b1cb3da5f2e6d7c14a6a779cd3ea1280022f7a47b8ffb43aae993046;data000.cpk;
+B04 Buffed Weapons;et/et0079.dat;3845308;571a0f0b70c40cc811f9187340ffb11a4aa46edad43085b18802821b8e59a70c;data000.cpk;
+B04 Buffed Weapons;et/et007c.dat;1044799;c7aa13990133f5d50532e07b6018a08379bddab9e981aa1f2c2adb47228f0911;data000.cpk;
+B04 Buffed Weapons;et/et007d.dat;1262268;6cf7d2a05ee3d91b405e99c7e8e4802a94360be10d0c29be5a8413dbb3d87127;data000.cpk;
+B04 Buffed Weapons;et/et007e.dat;948988;6c9ec22f61cc61bd7c06ac34620f4705f18f397fc0c4cace0872a09d6953bc9d;data000.cpk;
+B04 Buffed Weapons;et/et0082.dat;3958456;42ff469be1e601cf79c27455cc8782aefe05ae3d6821a0ac95573a57809f904d;data000.cpk;
+B04 Buffed Weapons;et/et0083.dat;1723320;eadf8e9d8bc503f5077224564c1d0eba61a85f35b9e87cdee63be73b98af241f;data000.cpk;
+B04 Buffed Weapons;et/et0085.dat;3904184;e82a1c948be320f2cd40625d532b71c3464ed8dd147562b3b73c4f542d802ced;data000.cpk;
+B04 Buffed Weapons;et/et0086.dat;3810232;6a645dc11831d2c1f6e579bda4d45d43f4292032e9272f2fd2577ae0546437d3;data000.cpk;
+B04 Buffed Weapons;et/et0088.dat;3797503;c4612985fc1de975d0c954dda05f225f34af68e7dcb371c1a2d876809880c0ac;data000.cpk;
+B04 Buffed Weapons;et/et0089.dat;3606079;a8c0461f27dd680ef219ab58d50e8cac5e45f522450f5c079385c3fc86f62f6c;data000.cpk;
+B04 Buffed Weapons;et/et008b.dat;3769532;ab61b7624d3db074b432df5a5aa69d23085c822c29457dd8c9753aaef632f02a;data000.cpk;
+B04 Buffed Weapons;et/et0091.dat;4804532;61aac438da907d9a37b13a725695e1d8288ab54b06223017c1db578df063afee;data000.cpk;
+B04 Buffed Weapons;et/et009b.dat;2332092;14bec94ac830ab401868a1befdbfd1c5b7ba9cad1bac2021234da8533e3e3f8f;data000.cpk;
+B04 Buffed Weapons;et/et0162.dat;1662396;d3e882ac03ff9a242caf122b93dd5eb0f0b4502737c88c05e03c925dbeefbf5e;data000.cpk;
+B04 Buffed Weapons;et/et0163.dat;1404668;f221a64cfddd212117bf1189f102f99cc3f9551157aadeeef9c03ad1f92fa30f;data000.cpk;
+B04 Buffed Weapons;et/et016a.dat;2774014;cbe7a15ca60d9795500c6ebf61f30ca7eec6fc8c76d2681cfe6c4125017a01a7;data000.cpk;
+B04 Buffed Weapons;et/et016b.dat;1610172;c4f10861765be6579d1487bfe0838a73dae2d76fa9a3d29ef1c6225a3f0919ca;data000.cpk;
+B04 Buffed Weapons;et/et016c.dat;1433340;5241c3b507f61e1b79a0ce414d59628fc31aba889750f3d5718e0eea392b2a6a;data000.cpk;
+B04 Buffed Weapons;et/et016d.dat;6367668;44bb8cc125f0d4c5040fa2861c99e64c376ead566ae3d900a132e9a840ecfefb;data000.cpk;
+B04 Buffed Weapons;et/et017c.dat;1022974;ca0f38aaa02f607ba56816106c78674a0d0e83af99f1e8c812091959f1e8f588;data000.cpk;
+B04 Buffed Weapons;et/et017d.dat;1164732;26091fd0944921cb2a0ab2dbb690f059f2495193074a811039b9f4172ec94bff;data000.cpk;
+B04 Buffed Weapons;et/et017e.dat;936700;e671ddabf9e591ffeb52a3d30583eb44b99c1ad9c1c72b39509f853554de9fd1;data000.cpk;
+B04 Buffed Weapons;pl/plcombo_0000.csv;14040;1c0d72e9033a268f5fbf099532bb4a28e4cba6998decec7529e5342863e61c20;data000.cpk;"B02 Colour My World V9; Z1 Fusion Buffed + CMW"
+B04 Buffed Weapons;pl/plcombo_0101.csv;14674;c3a214fcfff3146e754b75aebe503ff16d36e6d5f39c62a133e850e8b7a1a977;data000.cpk;
+B04 Buffed Weapons;pl/plcombo_0404.csv;35059;e6df097dd26ceb0522cdee986ad07928021ba89777eb87193f7763a695c1a69c;data000.cpk;
+B04 Buffed Weapons;pl/plcombo_0606.csv;15796;357f154599a37cdfa5c8b27f66487567360dd08c60bdb536409fc6cdb0b94b70;data000.cpk;
+B04 Buffed Weapons;pl/plcombo_0b0b.csv;6420;5329722f859cfdc7a761e257c5693c3d6c11e92fd659f04fb0eb302bd9586520;data000.cpk;"B08 Reworked Kafka; Z2 Fusion Buffed + Kafka"
+B04 Buffed Weapons;pl/plcombo_0d0d.csv;3100;18179f5283f9563bb21850c0fb4783cb5154bfeb8dd431d16f6ec03a315d9e2b;data000.cpk;
+B04 Buffed Weapons;pl/plcombo_0f0f.csv;3531;a4acb32c51757d5989c5e1b3cc1bae4eee81163b0cef4ad57124fd4c1a793af5;data000.cpk;
+B04 Buffed Weapons;pl/plcombo_1010.csv;9168;6cbb7af607e779831c47f50a3694c3ee72045e3446d382ee0e39039ec55186e2;data000.cpk;
+B04 Buffed Weapons;pl/plcombo_1212.csv;23350;01d2181203dd4c810814c0b2519ad9da8e4666fcefbc985c0eaa57c64721ffe9;data000.cpk;
+B04 Buffed Weapons;pl/plcombo_2020.csv;12392;282d84a0a06b5e6cce310451f6ea935089ae0f0e0d473aaa90eb2e7b9f236da6;data000.cpk;
+B04 Buffed Weapons;pl/plcombo_2121.csv;10306;fe905a0a98f539c892d3c7a40691d619b0e449aa9b537824b11e7d9dd772a074;data000.cpk;
+B04 Buffed Weapons;pl/plcombo_2323.csv;14003;c1cc1e7f49578fc6a36e1576c5e64c17c37e6ebf933788af103856d716299927;data000.cpk;
+B04 Buffed Weapons;pl/plcombo_2b2b.csv;13705;df9da4356eaa2fe9beef0794219846cff0cc7b633070f019b8518a11fe78fe2f;data000.cpk;
+B04 Buffed Weapons;pl/plcombo_3030.csv;8280;afd8c123bf1e251687e528788bef900e367491d6c080770022a973d6242091e4;data000.cpk;"C02 Better Balder Moveset; Z3 Fusion Buffed + Balder"
+B04 Buffed Weapons;pl/plcombo_4040.csv;3564;075d967bde81a08e734bf90a856c1f3e184b93e10159ab518be4fc359a0b6c2b;data000.cpk;
+B04 Buffed Weapons;pl/plcombo_7070.csv;10076;32be4d1adccbf470ca5a51ee10927d492b5d633c5da5f8bd11d9685ea5873cb5;data000.cpk;
+B04 Buffed Weapons;pl/plcombo_a0a0.csv;606;69c47d627218486abe29a5e970f059c340d609fe65fb7127c5a091093de0a39f;data000.cpk;
+B05 Killgore SaiFung Moveset;pl/plcombo_1515.csv;772;4ba5ab43796dc850d40d68266d11b57689313c44584ae07654860f2c56c5c9da;data000.cpk;
+B06 Beta Tartarus Moveset;pl/plcombo_1414.csv;16912;4a7115ffe51cd69f9912c5be561a8cc5f67ebac28053e4b73556ea929246ce36;data000.cpk;
+B07 Scarborough Fair over LiB;es/es0152.dat;1363968;3b594b2598515ef63b6eef11d3142427f6eb95c25cf18ae09c73c5e20c264b3f;data002.cpk;
+B07 Scarborough Fair over LiB;es/es0153.dat;1363968;df6907e9254c91e69f4583154f8f4d6dac3ed4e2c06a060172b12ebff097d362;data002.cpk;
+B07 Scarborough Fair over LiB;um/um1000.dat;1441792;d641e88a0728eb86fcb1ec06b90d76f476f4695dc95459af7530f94d7c8a7d1d;data003.cpk;
+B07 Scarborough Fair over LiB;wp/wp0000.dat;3297280;fc0730d50058ca1acdcb5b388939638b9c9843973a76def07fca63e3cb58d9f5;data000.cpk;B03 CMW Gun Recolor
+B08 Reworked Kafka;pl/plcombo_0b0b.csv;7839;d83072d6ccdac7ee93f52939f4197098aeddb26b34e4527415d4dfb681971a32;data000.cpk;"B04 Buffed Weapons; Z2 Fusion Buffed + Kafka"
+C01 Triple Alraune (3);ph5/p560.dat;17140;72e6091f30cdcc5d77bc2126b29b6d31532c8ad0ad41dca0e36c2fd22dc5b631;data002.cpk;C01 Triple Alraune (6)
+C01 Triple Alraune (6);ph5/p560.dat;18164;5a2aed121a12b1d9f200658d5bb6c0ccf256293a5ded81ee8939100cdf828ece;data002.cpk;C01 Triple Alraune (3)
+C02 Better Balder Moveset;pl/plcombo_3030.csv;13318;0ab4c9b9697bf3f40a01cebb42e63d725f9e3584c605167ca45dd3a0fbc2fd01;data000.cpk;"B04 Buffed Weapons; Z3 Fusion Buffed + Balder"
+C03 Chris Redfield;pl/pl004a.dat;22155264;8afffeb8348c8aa9281c5edc392c26a7f863db01a0e1fefb4393fb88d62c2b96;data000.cpk;C03 Chris Redfield (sin camiseta)
+C03 Chris Redfield;pl/pl004b.dat;15458304;aedfac557d0112fd01a29344f37de06c1ead05a9106ef7232a9d056f8f2a4bfc;data000.cpk;C03 Chris Redfield (sin camiseta)
+C03 Chris Redfield (sin camiseta);pl/pl004a.dat;21590016;6b038f1818cab3680ff25f8839ff928d385e3b36ab29a8ffd541b2e5aefc634e;data000.cpk;C03 Chris Redfield
+C03 Chris Redfield (sin camiseta);pl/pl004b.dat;15458304;aedfac557d0112fd01a29344f37de06c1ead05a9106ef7232a9d056f8f2a4bfc;data000.cpk;C03 Chris Redfield
+Z1 Fusion Buffed + CMW;pl/plcombo_0000.csv;17810;54c4e73e08c7c9dcf0d512557097e7708348b0200b4589ccb0d982e3ead0cf8a;data000.cpk;"B02 Colour My World V9; B04 Buffed Weapons"
+Z2 Fusion Buffed + Kafka;pl/plcombo_0b0b.csv;7841;9d13d21bb2305ffb3c4d9688d24396c00d48d0d7a7ac6430dc46bbfe00934288;data000.cpk;"B04 Buffed Weapons; B08 Reworked Kafka"
+Z3 Fusion Buffed + Balder;pl/plcombo_3030.csv;13333;9120d9a51b0962e955013ea97c6b71d8004670a083879956f9bf588f09bad17d;data000.cpk;"B04 Buffed Weapons; C02 Better Balder Moveset"

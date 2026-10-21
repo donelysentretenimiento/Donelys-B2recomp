@@ -253,6 +253,46 @@ def has_romfs(mod):
     return any(os.path.isdir(os.path.join(mod, d, 'romfs')) for d in os.listdir(mod) if not d.startswith('.'))
 
 
+def mod_info(mod):
+    """<mod>/mod.ini [mod] (the edición mejorada's library card: nombre, version, autor, ...) -> dict; {} without one."""
+    p, out = os.path.join(mod, 'mod.ini'), {}
+    if os.path.isfile(p):
+        with open(p, encoding='utf-8-sig', errors='replace') as f:
+            for raw in f:
+                if '=' in raw and raw.strip()[:1] not in ';#[':
+                    k, v = raw.split('=', 1)
+                    out[k.strip().lower()] = v.strip()
+    return out
+
+
+def romfs_set(mod):
+    """The rom: paths a RomFS mod provides (lower case, /), from <mod>/romfs or <mod>/<one folder>/romfs."""
+    roots = [os.path.join(mod, 'romfs')] + [os.path.join(mod, d, 'romfs') for d in sorted(os.listdir(mod))] if os.path.isdir(mod) else []
+    root = next((r for r in roots if os.path.isdir(r)), None)
+    return {os.path.relpath(os.path.join(a, f), root).replace('\\', '/').lower() for a, _, fs in os.walk(root) for f in fs} if root else set()
+
+
+def conflicts(folder, mods, settings):
+    """{mod: note} for switched-on RomFS mods that give the same rom: path (the one whose name sorts last wins, nnfs.c);
+    a pair is fine when one's mod.ini lists the other in 'combina_con', or says 'conflictos = ignorar' (button prompts)."""
+    on = [m for m in sorted(mods, key=str.lower) if settings.get(norm_key(m), True)]
+    info = {m: mod_info(os.path.join(folder, m)) for m in on}
+    files = {m: romfs_set(os.path.join(folder, m)) for m in on if info[m].get('conflictos', '').lower() != 'ignorar'}
+    out = {}
+    for a in files:
+        for b in files:
+            if a == b or b in info[a].get('combina_con', '') or a in info[b].get('combina_con', ''):
+                continue
+            # a switched-on mod that combines both (a fusion) and gives the path too settles it
+            same = sorted(p for p in files[a] & files[b] if not any(
+                p in files[c] and a in info[c].get('combina_con', '') and b in info[c].get('combina_con', '') for c in files))
+            if same:
+                win = max(a, b, key=str.lower)
+                out.setdefault(a, []).append('conflicto con %s en %s%s (gana %s)' % (b, ', '.join(same[:3]),
+                                             ' y %d más' % (len(same) - 3) if len(same) > 3 else '', win))
+    return {m: '; '.join(v) for m, v in out.items()}
+
+
 def tree(folder, main_nso=None, settings=None):
     """Every mod, file and block with its switch, for the launcher's Mods window: lines of tab-separated fields
          mod    <key> <on> <label> <note> <romfs>        a folder below the mods folder, or a file lying directly in it;
@@ -262,6 +302,7 @@ def tree(folder, main_nso=None, settings=None):
                                                          listed too, with romfs = 'romfs-only'.
          file   <key> <on> <label> <note>                a file inside a mod folder (label: its path inside the mod)
          block  <key> <on> <default> <records> <label>   a .pchtxt block (default 1 = written under @enabled)
+         info   <key> <text>                             a mod's library card (<mod>/mod.ini), after all mod lines
          state  <fingerprint | none | error> <message>   what setup.py would build with these switches (setup_state.json 'mods')
     in this order: a mod, then its files, each followed by its blocks. on: 1 / 0, as mods.ini or the default says."""
     want = nso_build_id(main_nso) if main_nso else None
@@ -293,6 +334,20 @@ def tree(folder, main_nso=None, settings=None):
         for d in sorted(os.listdir(folder), key=str.lower):
             if d not in seen and has_romfs(os.path.join(folder, d)):
                 lines.append(['mod', d, int(settings.get(norm_key(d), True)), d, '', 'romfs-only'])
+        # edición mejorada: the library card (mod.ini) as the label and an 'info' line; conflicts as the mod's note
+        mods = [l[1] for l in lines if l[0] == 'mod']
+        clash = conflicts(folder, mods, settings)
+        for l in [l for l in lines if l[0] == 'mod']:
+            i = mod_info(os.path.join(folder, l[1]))
+            if clash.get(l[1]) and not l[4]:
+                l[4] = clash[l[1]]
+            if not i:
+                continue
+            l[3] = '%s   [%s · %s]' % (l[1], i.get('categoria', '?'), i.get('version', '?'))
+            n = len(romfs_set(os.path.join(folder, l[1])))
+            lines.append(['info', l[1], 'Autor: %s | %s | Plataforma: %s | Requiere: %s | Para aplicarlo: %s | %s%s'
+                          % (i.get('autor', '?'), i.get('enlace', '-'), i.get('plataforma', '?'), i.get('requiere', '-'),
+                             i.get('aplicar', '?'), '%d archivos RomFS | ' % n if n else '', i.get('notas', ''))])
     try:
         lines.append(['state', fingerprint(load_mods(folder, main_nso, settings)) or 'none', ''])
     except ModError as e:

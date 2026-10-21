@@ -1376,13 +1376,13 @@ static void create_build_controls(void) {
  * Apply (rebuild) saves the switches and runs scripts\setup.py (as the build screen: hidden console, job object, log box):
  * its mods step patches main.elf, and the lift and the compile redo only what changed (about a minute). Not while the game
  * runs: the link replaces build\game.dll. */
-enum { ID_MTREE = 800, ID_MNOTE, ID_MLOG, ID_MFOLDER, ID_MREFRESH, ID_MAPPLY, ID_MCLOSE, ID_MSTATUS, ID_MTIMER = 2 };
+enum { ID_MTREE = 800, ID_MNOTE, ID_MLOG, ID_MFOLDER, ID_MREFRESH, ID_MAPPLY, ID_MCLOSE, ID_MSTATUS, ID_MPROFILE, ID_MPROFAPPLY, ID_MTIMER = 2 };
 enum { WM_APP_MSYNC = WM_APP + 3 };
 enum { MK_MOD, MK_FILE, MK_BLOCK };
-typedef struct { int kind, on, on0, def, parent, nrec, romfs; char key[600]; wchar_t label[300], note[600]; HTREEITEM h; } ModItem;
+typedef struct { int kind, on, on0, def, parent, nrec, romfs; char key[600]; wchar_t label[300], note[600], info[900]; HTREEITEM h; } ModItem;
 static ModItem *g_mi;
 static int g_mn, g_mloading, g_mstep, g_mclosing;
-static HWND g_mwin, g_mtree, g_mnote, g_mlog, g_mstatus, g_mapply;
+static HWND g_mwin, g_mtree, g_mnote, g_mlog, g_mstatus, g_mapply, g_mprof;
 static HANDLE g_mproc, g_mjob;
 static DWORD g_mt0;
 static char g_mwant[80], g_mbuilt[80];                      /* fingerprint of the switches as saved / of the build */
@@ -1505,7 +1505,8 @@ static void mods_note(void) {                               /* the selected item
         if (g_mi[i].kind == MK_BLOCK) swprintf(lines, 48, L", %d patch line%s", g_mi[i].nrec, g_mi[i].nrec == 1 ? L"" : L"s");
         const wchar_t *rf = g_mi[i].romfs == 2 ? L"\nRomFS files only (textures, models, sounds...): the game reads them when it starts, no rebuild needed."
                           : g_mi[i].romfs ? L"\nAlso has RomFS files: switching the mod off leaves them out as well (no rebuild needed for those)." : L"";
-        swprintf(t, 1400, L"%s   (%s%s)%s%s%s", key, what, lines, g_mi[i].note[0] ? L"\n" : L"", g_mi[i].note, rf);
+        swprintf(t, 1400, L"%s   (%s%s)%s%s%s%s%s", key, what, lines, g_mi[i].note[0] ? L"\n" : L"", g_mi[i].note, rf,
+                 g_mi[i].info[0] ? L"\n" : L"", g_mi[i].info);
     }
     SetWindowTextW(g_mnote, t);
 }
@@ -1539,6 +1540,10 @@ static void mods_load(void) {                               /* (re)reads the lis
         if (!strcmp(f[0], "state") && nf >= 2) {
             snprintf(g_mwant, sizeof g_mwant, "%s", f[1]);
             if (nf >= 3 && f[2][0]) utf8w(f[2], g_merr, 600);
+            continue;
+        }
+        if (!strcmp(f[0], "info") && nf >= 3) {             /* edición mejorada: the mod's library card (mod.ini) */
+            for (int k = 0; k < g_mn; k++) if (g_mi[k].kind == MK_MOD && !strcmp(g_mi[k].key, f[1])) utf8w(f[2], g_mi[k].info, 900);
             continue;
         }
         int kind = !strcmp(f[0], "mod") ? MK_MOD : !strcmp(f[0], "file") ? MK_FILE : !strcmp(f[0], "block") ? MK_BLOCK : -1;
@@ -1664,6 +1669,52 @@ static int mods_save(void) {
     for (int i = 0; i < g_mn; i++) g_mi[i].on0 = g_mi[i].on;
     return 1;
 }
+/* edición mejorada: config\perfiles\<nombre>.ini ([mods] <key> = on | off, written by tools\mods\biblioteca.py) sets the
+   check boxes of the mods it names; Apply saves them as any other change. Mods it does not name keep their switch. */
+static void mods_profiles_fill(void) {
+    wchar_t pat[MAX_PATH];
+    WIN32_FIND_DATAW fd;
+    swprintf(pat, MAX_PATH, L"%s\\config\\perfiles\\*.ini", g_root);
+    SendMessageW(g_mprof, CB_RESETCONTENT, 0, 0);
+    HANDLE h = FindFirstFileW(pat, &fd);
+    if (h == INVALID_HANDLE_VALUE) return;
+    do { wchar_t *dot = wcsrchr(fd.cFileName, L'.'); if (dot) *dot = 0; SendMessageW(g_mprof, CB_ADDSTRING, 0, (LPARAM)fd.cFileName); }
+    while (FindNextFileW(h, &fd));
+    FindClose(h);
+    SendMessageW(g_mprof, CB_SETCURSEL, 0, 0);
+}
+static void mods_profile_apply(void) {
+    int sel = (int)SendMessageW(g_mprof, CB_GETCURSEL, 0, 0);
+    if (sel < 0 || g_mproc) return;
+    wchar_t name[MAX_PATH], p[MAX_PATH * 2], t[400];
+    SendMessageW(g_mprof, CB_GETLBTEXT, sel, (LPARAM)name);
+    swprintf(p, MAX_PATH * 2, L"%s\\config\\perfiles\\%s.ini", g_root, name);
+    FILE *f = _wfopen(p, L"rb");
+    if (!f) { MessageBoxW(g_mwin, L"No se pudo leer el perfil.", L"B2recomp", MB_ICONERROR); return; }
+    char line[800], sect[128] = "", k[700], want[700], have[700];
+    int set = 0, missing = 0;
+    while (fgets(line, sizeof line, f)) {
+        if (line_section(line, sect, sizeof sect) || _stricmp(sect, "mods")) continue;
+        char *eq = strrchr(line, '=');
+        if (!eq || line[0] == ';' || line[0] == '#' || (size_t)(eq - line) >= sizeof k) continue;
+        memcpy(k, line, (size_t)(eq - line)); k[eq - line] = 0;
+        mods_norm(k, want, sizeof want);
+        int on = !strncmp(eq + 1 + strspn(eq + 1, " \t"), "on", 2), found = 0;
+        for (int i = 0; i < g_mn; i++) {
+            if (g_mi[i].kind != MK_MOD) continue;
+            mods_norm(g_mi[i].key, have, sizeof have);
+            if (strcmp(have, want)) continue;
+            g_mi[i].on = on; TreeView_SetCheckState(g_mtree, g_mi[i].h, on); found = 1; set++;
+        }
+        missing += !found;
+    }
+    fclose(f);
+    InvalidateRect(g_mtree, NULL, TRUE);
+    mods_status();
+    swprintf(t, 400, L"Perfil «%s»: %d mods ajustados%s. Pulsa Aplicar para guardarlo%s.", name, set,
+             missing ? L" (algunos del perfil no están en mods\\)" : L"", mods_dirty_code() ? L" (incluye código: recompila)" : L"");
+    SetWindowTextW(g_mstatus, t);
+}
 static int game_running(void) {                             /* build\game_native.exe, started by Play or anything else */
     if (g_proc && WaitForSingleObject(g_proc, 0) != WAIT_OBJECT_0) return 1;
     HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -1718,6 +1769,7 @@ static HWND mmk(const wchar_t *cls, const wchar_t *text, DWORD style, int x, int
     HWND c = CreateWindowExW(0, cls, text, WS_CHILD | WS_VISIBLE | style, S(x), S(y), S(w), S(h), g_mwin, (HMENU)(INT_PTR)id, GetModuleHandleW(NULL), NULL);
     SendMessageW(c, WM_SETFONT, (WPARAM)g_font, FALSE);
     if (!wcscmp(cls, L"BUTTON") || !wcscmp(cls, WC_TREEVIEWW)) { if (p_AllowDarkModeForWindow) p_AllowDarkModeForWindow(c, TRUE); SetWindowTheme(c, L"DarkMode_Explorer", NULL); }
+    if (!wcscmp(cls, L"COMBOBOX")) { if (p_AllowDarkModeForWindow) p_AllowDarkModeForWindow(c, TRUE); SetWindowTheme(c, L"DarkMode_CFD", NULL); }   /* as mk() */
     return c;
 }
 static LRESULT CALLBACK mwndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
@@ -1728,12 +1780,17 @@ static LRESULT CALLBACK mwndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
                        L"into the game: a change to them takes effect after Apply (rebuild), about a minute, with the game closed. "
                        L"RomFS files (textures, models, sounds) are read when the game starts.", SS_LEFT, 20, 14, MW_W - 40, 54, -1);
         g_mtree = mmk(WC_TREEVIEWW, L"", WS_BORDER | WS_TABSTOP | TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS,
-                      20, 74, MW_W - 40, 280, ID_MTREE);
+                      20, 74, MW_W - 40, 232, ID_MTREE);
         SetWindowLongPtrW(g_mtree, GWL_STYLE, GetWindowLongPtrW(g_mtree, GWL_STYLE) | TVS_CHECKBOXES);   /* after creation, as documented */
         TreeView_SetBkColor(g_mtree, C_FIELD); TreeView_SetTextColor(g_mtree, C_TEXT); TreeView_SetLineColor(g_mtree, C_EDGE);
-        g_mnote = mmk(L"STATIC", L"", SS_LEFT, 20, 360, MW_W - 40, 52, ID_MNOTE);
+        mmk(L"STATIC", L"Perfil:", SS_LEFT, 20, 318, 56, 24, -1);
+        g_mprof = mmk(L"COMBOBOX", L"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, 78, 314, 300, 200, ID_MPROFILE);
+        HWND pb = mmk(L"BUTTON", L"Cargar perfil", BS_PUSHBUTTON | WS_TABSTOP, 386, 312, 120, 30, ID_MPROFAPPLY);
+        tip(pb, L"Marca los mods del perfil elegido (config\\perfiles). «Juego original» los desactiva todos. Después pulsa Apply.");
+        mods_profiles_fill();
+        g_mnote = mmk(L"STATIC", L"", SS_LEFT, 20, 350, MW_W - 40, 84, ID_MNOTE);
         SendMessageW(g_mnote, WM_SETFONT, (WPARAM)g_smallfont, FALSE);
-        g_mlog = mmk(L"EDIT", L"", ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL | WS_VSCROLL | WS_BORDER, 20, 416, MW_W - 40, 136, ID_MLOG);
+        g_mlog = mmk(L"EDIT", L"", ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL | WS_VSCROLL | WS_BORDER, 20, 440, MW_W - 40, 112, ID_MLOG);
         SendMessageW(g_mlog, WM_SETFONT, (WPARAM)g_smallfont, FALSE);
         SendMessageW(g_mlog, EM_SETLIMITTEXT, 0, 0);
         if (p_AllowDarkModeForWindow) p_AllowDarkModeForWindow(g_mlog, TRUE);
@@ -1800,6 +1857,7 @@ static LRESULT CALLBACK mwndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
         if (id == ID_MFOLDER) { CreateDirectoryW(g_modsdir, NULL); ShellExecuteW(w, L"open", g_modsdir, NULL, NULL, SW_SHOWNORMAL); }
         else if (id == ID_MREFRESH) { if (!g_mproc) mods_load(); }
         else if (id == ID_MAPPLY) mods_apply();
+        else if (id == ID_MPROFAPPLY) mods_profile_apply();
         else if (id == ID_MCLOSE || id == IDCANCEL) SendMessageW(w, WM_CLOSE, 0, 0);
         return 0;
     }
