@@ -389,7 +389,7 @@ static int save_all(void) {                                   /* 1 = saved (or n
         int v = _wtoi(w);
         if (changed(&g_s[i]) && (v < g_s[i].nlo || v > g_s[i].nhi)) {
             wchar_t m[128]; swprintf(m, 128, L"The window %s must be between %d and %d.", i == S_WIDTH ? L"width" : L"height", g_s[i].nlo, g_s[i].nhi);
-            MessageBoxW(g_main, m, L"B2recomp", MB_ICONWARNING);
+            MessageBoxW(g_main, m, L"Donelys B2recomp", MB_ICONWARNING);
             SetFocus(g_s[i].hw);
             return 0;
         }
@@ -412,7 +412,7 @@ static int save_all(void) {                                   /* 1 = saved (or n
         ini_free(&f);
         if (!ok) {
             wchar_t m[MAX_PATH + 64]; swprintf(m, MAX_PATH + 64, L"Could not write %s.", g_ini[k]);
-            MessageBoxW(g_main, m, L"B2recomp", MB_ICONERROR);
+            MessageBoxW(g_main, m, L"Donelys B2recomp", MB_ICONERROR);
             return 0;
         }
     }
@@ -444,13 +444,13 @@ static int have_game(void) {
     swprintf(dll, MAX_PATH, L"%s\\game.dll", g_buildd);
     if (!file_exists(g_game) || !file_exists(dll)) {         /* a fresh clone: setup.py makes both from the player's dump */
         MessageBoxW(g_main, L"The game is not built yet: start B2recomp with --build, or run python scripts/setup.py --dump <your dump>",
-                    L"B2recomp", MB_ICONINFORMATION);
+                    L"Donelys B2recomp", MB_ICONINFORMATION);
         return 0;
     }
     if (file_exists(g_elf)) return 1;
     wchar_t m[MAX_PATH + 64];
     swprintf(m, MAX_PATH + 64, L"Not found:\n%s", g_elf);
-    MessageBoxW(g_main, m, L"B2recomp", MB_ICONERROR);
+    MessageBoxW(g_main, m, L"Donelys B2recomp", MB_ICONERROR);
     return 0;
 }
 static void run_tool(const wchar_t *args, const wchar_t *title) {   /* the pad tools print to a console of their own */
@@ -461,7 +461,7 @@ static void run_tool(const wchar_t *args, const wchar_t *title) {   /* the pad t
     STARTUPINFOW si = { sizeof si };
     PROCESS_INFORMATION pi;
     if (CreateProcessW(NULL, cmd, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, g_buildd, &si, &pi)) { CloseHandle(pi.hThread); CloseHandle(pi.hProcess); }
-    else MessageBoxW(g_main, L"Could not start the controller tool.", L"B2recomp", MB_ICONERROR);
+    else MessageBoxW(g_main, L"Could not start the controller tool.", L"Donelys B2recomp", MB_ICONERROR);
 }
 /* finding 128: the game's exit code as the last line of its log, so a report has it. A crash that never reached the game's
    own handler (a fast-fail, a stack overflow, heap corruption, a crash inside the graphics driver) writes no line itself. */
@@ -521,7 +521,7 @@ static void play(void) {
     swprintf(cmd, 3 * MAX_PATH, L"\"%s\" \"%s\"", g_game, g_elf);
     BOOL ok = CreateProcessW(g_game, cmd, NULL, NULL, hl != INVALID_HANDLE_VALUE, CREATE_NO_WINDOW, NULL, g_buildd, &si, &pi);
     if (hl != INVALID_HANDLE_VALUE) CloseHandle(hl);
-    if (!ok) { MessageBoxW(g_main, L"Could not start build\\game_native.exe.", L"B2recomp", MB_ICONERROR); return; }
+    if (!ok) { MessageBoxW(g_main, L"Could not start build\\game_native.exe.", L"Donelys B2recomp", MB_ICONERROR); return; }
     CloseHandle(pi.hThread);
     g_proc = pi.hProcess;
     g_play_t0 = GetTickCount64();
@@ -805,7 +805,7 @@ static int ksave(void) {
     if (sens != g_ksens0) { char v[16]; snprintf(v, sizeof v, "%.1f", sens / 10.0); ini_set(&f, "keyboard", "mouse_sensitivity", 1, v); n++; }
     int ok = !n || ini_save(&f, g_ini[F_PAD]);
     ini_free(&f);
-    if (!ok) { wchar_t m[MAX_PATH + 64]; swprintf(m, MAX_PATH + 64, L"Could not write %s.", g_ini[F_PAD]); MessageBoxW(g_kwin, m, L"B2recomp", MB_ICONERROR); return 0; }
+    if (!ok) { wchar_t m[MAX_PATH + 64]; swprintf(m, MAX_PATH + 64, L"Could not write %s.", g_ini[F_PAD]); MessageBoxW(g_kwin, m, L"Donelys B2recomp", MB_ICONERROR); return 0; }
     wchar_t t[96]; swprintf(t, 96, L"Keyboard and mouse: %d setting(s) saved.", n);
     if (!g_proc) SetWindowTextW(g_status, t);
     return 1;
@@ -1135,11 +1135,13 @@ static void paint(HWND w) {
         RECT t = { 0, S(60), rc.right, S(150) };
         SelectObject(dc, g_titlefont); SetTextColor(dc, C_GOLD);
         SetTextCharacterExtra(dc, S(6));
-        DrawTextW(dc, L"B2RECOMP", -1, &t, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+        DrawTextW(dc, L"DONELYS", -1, &t, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
         SetTextCharacterExtra(dc, 0);
     }
     SelectObject(dc, g_headfont); SetTextColor(dc, RGB(150, 178, 226));
-    spaced_text(dc, L"BAYONETTA 2 RECOMPILED", S(18), S(14), S(3));
+    spaced_text(dc, L"BAYONETTA 2 RECOMPILED  ·  EDICIÓN DONELYS", S(18), S(14), S(3));
+    SelectObject(dc, g_smallfont); SetTextColor(dc, RGB(150, 178, 226));      /* credit kept in sight: GPL-3.0 chain of origin */
+    TextOutW(dc, S(18), S(HEADER) - S(24), L"Basado en B2recomp de K0NL y ssbu-recomp de Denkishi  ·  GPL-3.0", 63);
     HPEN edge = CreatePen(PS_SOLID, 1, C_EDGE), gold = CreatePen(PS_SOLID, S(2), C_GOLD);
     static const wchar_t *k_title[2] = { L"GRAPHICS", L"CONTROLLER" };
     for (int k = 0; k < (g_mode ? 1 : 2); k++) {
@@ -1368,7 +1370,7 @@ static void build_enable(int on) {
 static int start_setup(const wchar_t *args, HWND to, HANDLE *proc, HANDLE *job) {
     if (!*g_python) {
         MessageBoxW(to, L"Python was not found. The builder package brings its own in deps\\python; from the source, install "
-                        L"Python 3.10+ (python.org) and start this again.", L"B2recomp", MB_ICONERROR);
+                        L"Python 3.10+ (python.org) and start this again.", L"Donelys B2recomp", MB_ICONERROR);
         return 0;
     }
     if (g_bundled) {                                        /* only the bundled tools: nothing of this PC's setup may leak in */
@@ -1393,7 +1395,7 @@ static int start_setup(const wchar_t *args, HWND to, HANDLE *proc, HANDLE *job) 
     BOOL ok = CreateProcessW(g_python, cmd, NULL, NULL, TRUE, CREATE_NEW_CONSOLE | CREATE_SUSPENDED, NULL, g_root, &si, &pi);
     CloseHandle(wr);
     if (nul != INVALID_HANDLE_VALUE) CloseHandle(nul);
-    if (!ok) { CloseHandle(rd); MessageBoxW(to, L"Could not start scripts\\setup.py.", L"B2recomp", MB_ICONERROR); return 0; }
+    if (!ok) { CloseHandle(rd); MessageBoxW(to, L"Could not start scripts\\setup.py.", L"Donelys B2recomp", MB_ICONERROR); return 0; }
     *job = CreateJobObjectW(NULL, NULL);
     JOBOBJECT_EXTENDED_LIMIT_INFORMATION li = { 0 };
     li.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
@@ -1578,7 +1580,7 @@ static char *run_capture(const wchar_t *cmd) {
  * window and the build screen (notes/roadmap.md "Later ideas", 2026-10-18). */
 static void make_report(HWND owner) {
     if (!*g_python) {
-        MessageBoxW(owner, L"Python was not found: the builder package brings its own (deps\\python).", L"B2recomp", MB_ICONERROR);
+        MessageBoxW(owner, L"Python was not found: the builder package brings its own (deps\\python).", L"Donelys B2recomp", MB_ICONERROR);
         return;
     }
     wchar_t cmd[4 * MAX_PATH], zip[MAX_PATH];
@@ -1588,7 +1590,7 @@ static void make_report(HWND owner) {
     char *out = run_capture(cmd);
     SetCursor(old);
     if (!out || !file_exists(zip)) {
-        MessageBoxW(owner, L"The report could not be made (scripts\\report.py did not finish).", L"B2recomp", MB_ICONERROR);
+        MessageBoxW(owner, L"The report could not be made (scripts\\report.py did not finish).", L"Donelys B2recomp", MB_ICONERROR);
         free(out);
         return;
     }
@@ -1811,7 +1813,7 @@ static int mods_save(void) {
     for (int i = 0; i < g_mn; i++) if (g_mi[i].on != g_mi[i].on0) mods_set(&f, g_mi[i].key, g_mi[i].on ? "on" : "off");
     int ok = ini_save(&f, g_modsini);
     ini_free(&f);
-    if (!ok) { wchar_t m[MAX_PATH + 64]; swprintf(m, MAX_PATH + 64, L"Could not write %s.", g_modsini); MessageBoxW(g_mwin, m, L"B2recomp", MB_ICONERROR); return 0; }
+    if (!ok) { wchar_t m[MAX_PATH + 64]; swprintf(m, MAX_PATH + 64, L"Could not write %s.", g_modsini); MessageBoxW(g_mwin, m, L"Donelys B2recomp", MB_ICONERROR); return 0; }
     for (int i = 0; i < g_mn; i++) g_mi[i].on0 = g_mi[i].on;
     return 1;
 }
@@ -1836,7 +1838,7 @@ static void mods_profile_apply(void) {
     SendMessageW(g_mprof, CB_GETLBTEXT, sel, (LPARAM)name);
     swprintf(p, MAX_PATH * 2, L"%s\\config\\perfiles\\%s.ini", g_root, name);
     FILE *f = _wfopen(p, L"rb");
-    if (!f) { MessageBoxW(g_mwin, L"No se pudo leer el perfil.", L"B2recomp", MB_ICONERROR); return; }
+    if (!f) { MessageBoxW(g_mwin, L"No se pudo leer el perfil.", L"Donelys B2recomp", MB_ICONERROR); return; }
     char line[800], sect[128] = "", k[700], want[700], have[700];
     int set = 0, missing = 0;
     while (fgets(line, sizeof line, f)) {
@@ -1881,7 +1883,7 @@ static int game_running(void) {                             /* build\game_native
 static void mods_apply(void) {
     if (g_mproc) return;
     int rebuild = mods_dirty_code() || strcmp(g_mwant, g_mbuilt);   /* else only RomFS-only mods changed */
-    if (rebuild && game_running()) { MessageBoxW(g_mwin, L"The game is running: close it first (the rebuild replaces build\\game.dll).", L"B2recomp", MB_ICONINFORMATION); return; }
+    if (rebuild && game_running()) { MessageBoxW(g_mwin, L"The game is running: close it first (the rebuild replaces build\\game.dll).", L"Donelys B2recomp", MB_ICONINFORMATION); return; }
     if (!mods_save()) return;
     if (!rebuild) {
         mods_load();
@@ -2266,7 +2268,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR cmdline, int show) {
     AdjustWindowRectEx(&r, style, FALSE, WS_EX_CONTROLPARENT);
     int ww = r.right - r.left, wh = r.bottom - r.top;
     RECT wa; SystemParametersInfoW(SPI_GETWORKAREA, 0, &wa, 0);
-    HWND w = CreateWindowExW(WS_EX_CONTROLPARENT, wc.lpszClassName, g_mode ? L"B2recomp" : L"B2recomp Launcher", style,
+    HWND w = CreateWindowExW(WS_EX_CONTROLPARENT, wc.lpszClassName, g_mode ? L"Donelys B2recomp" : L"Donelys · Bayonetta 2 Recomp", style,
                              wa.left + (wa.right - wa.left - ww) / 2, wa.top + (wa.bottom - wa.top - wh) / 2, ww, wh, NULL, NULL, inst, NULL);
     set_window_icon(w);                                     /* build\bayonetta2.ico wins over resource 1: a launcher built
                                                                without the icon still shows the player's own */
