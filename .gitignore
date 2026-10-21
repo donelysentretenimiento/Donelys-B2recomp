@@ -183,3 +183,6 @@
 !/tests/hdr_probe.c
 !/tests/test_check_public_repo.py
 !/tests/launcher_i18n_test.c
+
+# Local linked worktrees are never repository content.
+/.worktrees/
