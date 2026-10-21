@@ -1,0 +1,23 @@
+name: Error general / General bug
+description: Fallo reproducible no cubierto por otra plantilla / Reproducible fault not covered elsewhere
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: dropdown
+    id: language
+    attributes: {label: Idioma / Language, options: [Español, English]}
+    validations: {required: true}
+  - type: input
+    id: version
+    attributes: {label: Versión o commit / Version or commit}
+    validations: {required: true}
+  - type: textarea
+    id: steps
+    attributes: {label: Pasos y resultado / Steps and result, description: Incluye resultado esperado y observado. / Include expected and observed behavior.}
+    validations: {required: true}
+  - type: textarea
+    id: system
+    attributes: {label: Sistema / System, description: Windows, CPU, GPU, driver, resolución y estado HDR.}
+  - type: checkboxes
+    id: safety
+    attributes: {label: Privacidad / Privacy, options: [{label: "No adjunto claves, archivos del juego ni datos personales. / I am not attaching keys, game files, or personal data.", required: true}]}

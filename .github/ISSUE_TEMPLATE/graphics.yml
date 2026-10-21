@@ -1,0 +1,17 @@
+name: Gráficos / Graphics
+description: Vulkan, parpadeo, formato o resolución (no HDR) / Vulkan, flicker, format, or resolution (not HDR)
+title: "[Graphics] "
+labels: [graphics]
+body:
+  - type: input
+    id: version
+    attributes: {label: Versión o commit / Version or commit}
+    validations: {required: true}
+  - type: textarea
+    id: hardware
+    attributes: {label: GPU, driver, monitor y resolución / GPU, driver, display, and resolution}
+    validations: {required: true}
+  - type: textarea
+    id: reproduction
+    attributes: {label: Pasos, esperado y observado / Steps, expected, and observed}
+    validations: {required: true}

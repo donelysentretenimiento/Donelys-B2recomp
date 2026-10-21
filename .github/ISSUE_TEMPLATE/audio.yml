@@ -1,0 +1,16 @@
+name: Audio
+description: Sonido, vídeos o dispositivo de salida / Sound, videos, or output device
+title: "[Audio] "
+labels: [audio]
+body:
+  - type: input
+    id: version
+    attributes: {label: Versión o commit / Version or commit}
+    validations: {required: true}
+  - type: textarea
+    id: device
+    attributes: {label: Dispositivo y formato / Device and format}
+  - type: textarea
+    id: reproduction
+    attributes: {label: Pasos, esperado y observado / Steps, expected, and observed}
+    validations: {required: true}

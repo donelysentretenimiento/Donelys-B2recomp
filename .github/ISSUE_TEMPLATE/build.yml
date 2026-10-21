@@ -1,0 +1,23 @@
+name: Compilación / Build problem
+description: Constructor, dependencias o validación del volcado / Builder, dependencies, or dump validation
+title: "[Build] "
+labels: [build]
+body:
+  - type: input
+    id: version
+    attributes: {label: Versión o commit / Version or commit}
+    validations: {required: true}
+  - type: dropdown
+    id: method
+    attributes: {label: Método / Method, options: [DONELYS Builder package, Source checkout]}
+    validations: {required: true}
+  - type: textarea
+    id: error
+    attributes: {label: Etapa y error / Stage and error, description: Copia sólo el mensaje y registro sin datos sensibles. / Paste only the sanitized message and log.}
+    validations: {required: true}
+  - type: textarea
+    id: system
+    attributes: {label: Sistema y pasos / System and steps}
+  - type: checkboxes
+    id: safety
+    attributes: {label: Privacidad / Privacy, options: [{label: "No adjunto volcado, claves ni código generado. / No dump, keys, or generated game code attached.", required: true}]}

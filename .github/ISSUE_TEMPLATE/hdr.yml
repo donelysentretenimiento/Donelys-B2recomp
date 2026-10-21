@@ -1,0 +1,20 @@
+name: HDR10 o scRGB
+description: Color, brillo, monitor o cambio de modo HDR / Color, brightness, display, or HDR mode switching
+title: "[HDR] "
+labels: [hdr]
+body:
+  - type: input
+    id: version
+    attributes: {label: Preview o commit / Preview or commit}
+    validations: {required: true}
+  - type: textarea
+    id: setup
+    attributes: {label: GPU, driver, monitor y ajustes / GPU, driver, display, and settings, description: Incluye modo Windows y valores hdr_* sin publicar otros datos.}
+    validations: {required: true}
+  - type: textarea
+    id: result
+    attributes: {label: Pasos, esperado y observado / Steps, expected, and observed}
+    validations: {required: true}
+  - type: checkboxes
+    id: status
+    attributes: {label: Confirmación / Confirmation, options: [{label: "Entiendo que una captura SDR no demuestra la señal HDR. / I understand an SDR screenshot does not establish the HDR signal.", required: true}]}

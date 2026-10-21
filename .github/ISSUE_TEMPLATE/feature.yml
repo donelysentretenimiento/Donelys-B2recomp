@@ -1,0 +1,17 @@
+name: Mejora / Feature request
+description: Propuesta concreta y compatible con el alcance / Concrete, in-scope proposal
+title: "[Feature] "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes: {label: Problema / Problem, description: ¿Qué necesidad resuelve? / What need does this solve?}
+    validations: {required: true}
+  - type: textarea
+    id: proposal
+    attributes: {label: Propuesta y alternativas / Proposal and alternatives}
+    validations: {required: true}
+  - type: dropdown
+    id: area
+    attributes: {label: Área / Area, options: [Documentation, Launcher, Builder and updates, Runtime, HDR, Mods, Controllers, Other]}
+    validations: {required: true}

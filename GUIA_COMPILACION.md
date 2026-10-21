@@ -1,14 +1,14 @@
 # Guía de compilación
 
-La compilación de B2recomp está explicada con detalle en [BUILDING.md](BUILDING.md), del proyecto base. Aquí solo se indica lo que cambia en esta edición. **No se repite lo que ya dice ese documento.**
+La documentación autónoma de DONELYS está disponible en [docs/es/compilacion.md](docs/es/compilacion.md), con instalación para principiantes en [docs/es/instalacion.md](docs/es/instalacion.md). La versión inglesa equivalente está en [docs/en/building.md](docs/en/building.md). `BUILDING.md` se conserva como referencia técnica exhaustiva del flujo heredado, pero ya no es necesario visitar otro repositorio para completar la instalación.
 
 ## Qué necesitas
 
 - Windows 11 (probado) con una GPU con Vulkan 1.3. Probado con una RTX 5090.
 - Tu propia copia del juego, **versión 1.2, actualización 131072** (Title ID `01007960049A0000`, Build ID `F19B2E01E1794F93`).
-- Las herramientas de compilación: llvm-mingw, SDL3, Vulkan-Headers y la DLL de glslang. El *paquete Builder* de B2recomp las trae en su carpeta `deps\`; consulta `BUILDING.md`.
+- Las herramientas de compilación: llvm-mingw, SDL3, Vulkan-Headers y la DLL de glslang. El paquete DONELYS Builder completo las trae en `deps\` junto con Python portable.
 
-Este repositorio no incluye el juego, ni las herramientas, ni el código generado a partir del juego.
+Este repositorio no incluye el juego ni código generado a partir de él. El clon no incluye necesariamente las herramientas, pero el paquete DONELYS Builder publicado sí las incorpora.
 
 ## Pasos
 
