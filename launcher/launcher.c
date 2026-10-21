@@ -182,59 +182,59 @@ typedef struct {
     double filev;
 } Setting;
 
-static const Opt o_renderer[] = { {"vulkan", L"Vulkan (recommended)"}, {"opengl", L"OpenGL (old renderer, NVIDIA only)"} };
-static const Opt o_profile[] = { {"custom", L"Custom (the settings below)"}, {"low", L"Low (weak or integrated GPU)"} };
-static const Opt o_window[] = { {"windowed", L"Windowed"}, {"borderless", L"Borderless window"}, {"fullscreen", L"Fullscreen (borderless, on top)"} };
-static const Opt o_vsync[] = { {"auto", L"Auto (by refresh rate)"}, {"display", L"Display refresh (60/120/240 Hz)"},
-                               {"clock", L"Program clock (60 Hz)"}, {"off", L"Off (tearing, lowest latency)"},
-                               {"on", L"Swapchain FIFO (not recommended)"}, {"mailbox", L"Mailbox"} };
-static const Opt o_latency[] = { {"normal", L"Normal"}, {"low", L"Low"}, {"lowest", L"Lowest (frames may judder)"} };
-static const Opt o_aniso[] = { {"game", L"Game default"}, {"2", L"2x"}, {"4", L"4x"}, {"8", L"8x"}, {"16", L"16x"} };
-static const Opt o_aspect[] = { {"keep", L"Keep 16:9 (black bars)"}, {"stretch", L"Stretch to the window"} };
-static const Opt o_layout[] = { {"auto", L"Auto"}, {"positional", L"By position (Switch)"}, {"labels", L"By printed letter"} };
-static const Opt o_prompts[] = { {"auto", L"Auto (by controller)"}, {"switch", L"Switch"}, {"playstation", L"PlayStation"}, {"xbox", L"Xbox"} };
+static const Opt o_renderer[] = { {"vulkan", L"Vulkan (recomendado)"}, {"opengl", L"OpenGL (antiguo, solo NVIDIA)"} };
+static const Opt o_profile[] = { {"custom", L"Personalizado (los ajustes de abajo)"}, {"low", L"Bajo (GPU débil o integrada)"} };
+static const Opt o_window[] = { {"windowed", L"Ventana"}, {"borderless", L"Ventana sin bordes"}, {"fullscreen", L"Pantalla completa (sin bordes)"} };
+static const Opt o_vsync[] = { {"auto", L"Automático (según la frecuencia)"}, {"display", L"Frecuencia pantalla (60/120/240 Hz)"},
+                               {"clock", L"Reloj del programa (60 Hz)"}, {"off", L"Desactivada (cortes, mínima latencia)"},
+                               {"on", L"FIFO de la swapchain (no recomendado)"}, {"mailbox", L"Mailbox"} };
+static const Opt o_latency[] = { {"normal", L"Normal"}, {"low", L"Baja"}, {"lowest", L"Mínima (puede haber tirones)"} };
+static const Opt o_aniso[] = { {"game", L"Valor del juego"}, {"2", L"2x"}, {"4", L"4x"}, {"8", L"8x"}, {"16", L"16x"} };
+static const Opt o_aspect[] = { {"keep", L"Mantener 16:9 (barras negras)"}, {"stretch", L"Estirar a la ventana"} };
+static const Opt o_layout[] = { {"auto", L"Automático"}, {"positional", L"Por posición (Switch)"}, {"labels", L"Por letra impresa"} };
+static const Opt o_prompts[] = { {"auto", L"Auto (según mando)"}, {"switch", L"Switch"}, {"playstation", L"PlayStation"}, {"xbox", L"Xbox"} };
 #define OPTS(a) a, (int)(sizeof a / sizeof a[0])
 
 enum { S_RENDERER, S_PROFILE, S_WINDOW, S_WIDTH, S_HEIGHT, S_VSYNC, S_LATENCY, S_SCALE, S_ANISO, S_ASPECT, S_OVERLAY, S_FPS,
        S_LAYOUT, S_PROMPTS, S_DEADZONE, S_RUMBLE, S_STRENGTH, S_INPUT, S_COUNT };
-static const Opt o_input[] = { {"both", L"Controller and keyboard"}, {"keyboard", L"Keyboard and mouse only"}, {"controller", L"Controller only"} };
+static const Opt o_input[] = { {"both", L"Mando y teclado"}, {"keyboard", L"Solo teclado y ratón"}, {"controller", L"Solo mando"} };
 static Setting g_s[S_COUNT] = {
-    [S_RENDERER] = { F_GFX, "renderer", K_COMBO, OPTS(o_renderer), 0, .def = "vulkan", .label = L"Renderer",
-                     .tip = L"Vulkan is the default. OpenGL is the first renderer, kept as a fallback (NVIDIA only)." },
-    [S_PROFILE]  = { F_GFX, "profile", K_COMBO, OPTS(o_profile), 0, .def = "custom", .label = L"Preset",
-                     .tip = L"Low: resolution scale 0.5, game anisotropic filtering and the program clock for vsync; those three settings are then not used." },
-    [S_WINDOW]   = { F_GFX, "window", K_COMBO, OPTS(o_window), 0, .def = "windowed", .label = L"Window mode",
-                     .tip = L"Borderless and fullscreen cover the monitor the window is on (the desktop keeps its resolution)." },
-    [S_WIDTH]    = { F_GFX, "width", K_NUM, .nlo = 320, .nhi = 16384, .def = "1280", .label = L"Window size" },
+    [S_RENDERER] = { F_GFX, "renderer", K_COMBO, OPTS(o_renderer), 0, .def = "vulkan", .label = L"Renderizador",
+                     .tip = L"Vulkan es el predeterminado. OpenGL es el primer renderizador, que se conserva de reserva (solo NVIDIA)." },
+    [S_PROFILE]  = { F_GFX, "profile", K_COMBO, OPTS(o_profile), 0, .def = "custom", .label = L"Perfil",
+                     .tip = L"Bajo: escala de resolución 0,5, filtrado del juego y reloj del programa como sincronización; esos tres ajustes dejan de usarse." },
+    [S_WINDOW]   = { F_GFX, "window", K_COMBO, OPTS(o_window), 0, .def = "windowed", .label = L"Modo de ventana",
+                     .tip = L"Sin bordes y pantalla completa cubren el monitor donde está la ventana (el escritorio conserva su resolución)." },
+    [S_WIDTH]    = { F_GFX, "width", K_NUM, .nlo = 320, .nhi = 16384, .def = "1280", .label = L"Tamaño de ventana" },
     [S_HEIGHT]   = { F_GFX, "height", K_NUM, .nlo = 180, .nhi = 16384, .def = "720" },
-    [S_VSYNC]    = { F_GFX, "vsync", K_COMBO, OPTS(o_vsync), 2, .def = "auto", .label = L"Vertical sync",
-                     .tip = L"Auto: 'display' on a 60, 120 or 240 Hz monitor (the program's clock while its refresh drifts: G-Sync / FreeSync), else the program's own 60 Hz clock. Off: tearing allowed, lowest latency." },
-    [S_LATENCY]  = { F_GFX, "latency", K_COMBO, OPTS(o_latency), 0, .def = "normal", .label = L"Input latency",
-                     .tip = L"Low: the controller is read 2-5 ms later, closer to the screen. Lowest: about 4 ms less again, but frames no longer last the same time." },
-    [S_SCALE]    = { F_GFX, "resolution_scale", K_SLIDER, .lo = 0.5, .hi = 3.0, .step = 0.05, .def = "1.0", .label = L"Resolution scale",
-                     .tip = L"Internal resolution. 1.0 = the game's 1280x720; 1.5 = 1920x1080; 2.0 = 2560x1440 (sharper edges)." },
-    [S_ANISO]    = { F_GFX, "anisotropic_filtering", K_COMBO, OPTS(o_aniso), 0, .def = "game", .label = L"Anisotropic filtering",
-                     .tip = L"Sharper textures at flat angles; costs little on any GPU." },
-    [S_ASPECT]   = { F_GFX, "aspect", K_COMBO, OPTS(o_aspect), 0, .def = "keep", .label = L"Aspect ratio",      /* [Recomps#1] */
-                     .tip = L"The game's picture is 16:9. Keep: in a wider or taller window (an ultrawide monitor in borderless or "
-                            L"fullscreen mode) it keeps its shape, with black bars. Stretch: it fills the window." },
-    [S_OVERLAY]  = { F_GFX, "frame_time_overlay", K_CHECK, .def = "off", .label = L"Show frame time in the window title" },
-    [S_FPS]      = { F_GFX, "frame_rate", K_SLIDER, .lo = 60, .hi = 120, .step = 1, .def = "60", .label = L"Frame rate (beta)",   /* [Recomps#1] gfx_options.c */
-                     .tip = L"60: the game as made. Above 60 (experimental): the game runs up to this many frames per second at its normal speed. "
-                            L"Its main timers are converted; some effects, menus and button-mash prompts may still run faster, and cinematics run in real time." },
-    [S_LAYOUT]   = { F_PAD, "layout", K_COMBO, OPTS(o_layout), 1, .def = "auto", .label = L"Face buttons",
-                     .tip = L"By position: the right button is A, bottom B, top X, left Y (as on a Switch). By printed letter: an Xbox pad's A is A. Auto: by letter on GameCube pads, by position on all others." },
-    [S_PROMPTS]  = { F_PAD, "button_prompts", K_COMBO, OPTS(o_prompts), 0, .def = "auto", .label = L"Button prompts",   /* [Recomps#1] nnpad_sdl.c */
-                     .tip = L"Which button pictures the game shows. PlayStation and Xbox need the free mod \"Controller Prompts "
-                            L"Replacement (DS4/XBOX)\" by Timo654 (gamebanana.com/mods/360121, Switch version): put its DS4Prompts / "
-                            L"XBOXPrompts folder into the mods folder. Auto: by player 1's controller when the game starts." },
-    [S_DEADZONE] = { F_PAD, "deadzone", K_SLIDER, .lo = 0.0, .hi = 0.5, .step = 0.01, .def = "0.10", .label = L"Stick dead zone",
-                     .tip = L"Part of the stick travel around the centre that counts as no movement." },
-    [S_RUMBLE]   = { F_PAD, "rumble", K_CHECK, .def = "on", .label = L"Vibration" },
-    [S_STRENGTH] = { F_PAD, "rumble_strength", K_SLIDER, .lo = 0.0, .hi = 2.0, .step = 0.05, .def = "1.0", .label = L"Vibration strength" },
-    [S_INPUT]    = { F_PAD, "input", K_COMBO, OPTS(o_input), 0, .def = "both", .label = L"Input",       /* [Recomps#1] nnpad_sdl.c */
-                     .tip = L"Lock the game to one kind of input. Keyboard and mouse only: controllers are ignored (no buttons, no vibration). "
-                            L"Controller only: the keyboard and mouse are ignored (from the next game start; the controller part applies at once)." },
+    [S_VSYNC]    = { F_GFX, "vsync", K_COMBO, OPTS(o_vsync), 2, .def = "auto", .label = L"Sincr. vertical",
+                     .tip = L"Automático: «pantalla» en un monitor de 60, 120 o 240 Hz (el reloj del programa mientras la frecuencia varía: G-Sync / FreeSync); si no, el reloj propio de 60 Hz. Desactivada: permite cortes, mínima latencia." },
+    [S_LATENCY]  = { F_GFX, "latency", K_COMBO, OPTS(o_latency), 0, .def = "normal", .label = L"Latencia de entrada",
+                     .tip = L"Baja: el mando se lee 2-5 ms más tarde, más cerca de la pantalla. Mínima: unos 4 ms menos, pero los fotogramas dejan de durar lo mismo." },
+    [S_SCALE]    = { F_GFX, "resolution_scale", K_SLIDER, .lo = 0.5, .hi = 3.0, .step = 0.05, .def = "1.0", .label = L"Escala de resolución",
+                     .tip = L"Resolución interna. 1,0 = los 1280x720 del juego; 1,5 = 1920x1080; 2,0 = 2560x1440 (bordes más nítidos)." },
+    [S_ANISO]    = { F_GFX, "anisotropic_filtering", K_COMBO, OPTS(o_aniso), 0, .def = "game", .label = L"Filtrado anisotrópico",
+                     .tip = L"Texturas más nítidas en ángulos rasantes; cuesta poco en cualquier GPU." },
+    [S_ASPECT]   = { F_GFX, "aspect", K_COMBO, OPTS(o_aspect), 0, .def = "keep", .label = L"Relación de aspecto",      /* [Recomps#1] */
+                     .tip = L"La imagen del juego es 16:9. Mantener: en una ventana más ancha o más alta (un monitor panorámico en modo sin bordes o "
+                            L"pantalla completa) conserva su forma, con barras negras. Estirar: llena la ventana." },
+    [S_OVERLAY]  = { F_GFX, "frame_time_overlay", K_CHECK, .def = "off", .label = L"Mostrar el tiempo de fotograma en el título de la ventana" },
+    [S_FPS]      = { F_GFX, "frame_rate", K_SLIDER, .lo = 60, .hi = 120, .step = 1, .def = "60", .label = L"FPS (beta)",   /* [Recomps#1] gfx_options.c */
+                     .tip = L"60: el juego tal como se hizo. Por encima de 60 (experimental): el juego va hasta esos fotogramas por segundo a su velocidad normal. "
+                            L"Sus temporizadores principales se convierten; algunos efectos, menús y pruebas de machacar botones pueden ir más rápido, y las cinemáticas van en tiempo real." },
+    [S_LAYOUT]   = { F_PAD, "layout", K_COMBO, OPTS(o_layout), 1, .def = "auto", .label = L"Botones",
+                     .tip = L"Por posición: el botón derecho es A, el inferior B, el superior X y el izquierdo Y (como en una Switch). Por letra impresa: la A de un mando Xbox es A. Automático: por letra en mandos de GameCube, por posición en el resto." },
+    [S_PROMPTS]  = { F_PAD, "button_prompts", K_COMBO, OPTS(o_prompts), 0, .def = "auto", .label = L"Iconos",   /* [Recomps#1] nnpad_sdl.c */
+                     .tip = L"Qué dibujos de botones muestra el juego. PlayStation y Xbox necesitan el mod gratuito \"Controller Prompts "
+                            L"Replacement (DS4/XBOX)\" de Timo654 (gamebanana.com/mods/360121, versión Switch): pon sus carpetas DS4Prompts / "
+                            L"XBOXPrompts en la carpeta de mods. Automático: según el mando del jugador 1 al arrancar el juego." },
+    [S_DEADZONE] = { F_PAD, "deadzone", K_SLIDER, .lo = 0.0, .hi = 0.5, .step = 0.01, .def = "0.10", .label = L"Zona muerta",
+                     .tip = L"Parte del recorrido del stick alrededor del centro que cuenta como sin movimiento." },
+    [S_RUMBLE]   = { F_PAD, "rumble", K_CHECK, .def = "on", .label = L"Vibración" },
+    [S_STRENGTH] = { F_PAD, "rumble_strength", K_SLIDER, .lo = 0.0, .hi = 2.0, .step = 0.05, .def = "1.0", .label = L"Fuerza" },
+    [S_INPUT]    = { F_PAD, "input", K_COMBO, OPTS(o_input), 0, .def = "both", .label = L"Entrada",       /* [Recomps#1] nnpad_sdl.c */
+                     .tip = L"Limita el juego a un tipo de entrada. Solo teclado y ratón: se ignoran los mandos (sin botones ni vibración). "
+                            L"Solo mando: se ignoran el teclado y el ratón (desde el próximo arranque; la parte del mando se aplica al instante)." },
 };
 
 /* ================================================================ paths and state */
@@ -313,14 +313,14 @@ static void update_ui(void) {
     EnableWindow(g_s[S_ASPECT].hw, vk);
     int rumble = SendMessageW(g_s[S_RUMBLE].hw, BM_GETCHECK, 0, 0) == BST_CHECKED;
     EnableWindow(g_s[S_STRENGTH].hw, rumble);
-    SetWindowTextW(g_s[S_RUMBLE].hval, rumble ? L"On" : L"Off");
+    SetWindowTextW(g_s[S_RUMBLE].hval, rumble ? L"Sí" : L"No");
     for (int i = 0; i < S_COUNT; i++) {                      /* labels are dimmed with their control (WM_CTLCOLORSTATIC) */
         if (g_s[i].hlabel) InvalidateRect(g_s[i].hlabel, NULL, TRUE);
         if (g_s[i].hval) InvalidateRect(g_s[i].hval, NULL, TRUE);
     }
-    SetWindowTextW(g_gfxnote, !vk ? L"OpenGL ignores the greyed settings (they are Vulkan only)."
-                            : !custom ? L"The Low preset sets vsync, resolution scale and filtering itself."
-                            : L"Graphics settings take effect the next time the game starts.");
+    SetWindowTextW(g_gfxnote, !vk ? L"OpenGL ignora los ajustes en gris (son solo de Vulkan)."
+                            : !custom ? L"El perfil Bajo fija por sí mismo la sincronización, la escala y el filtrado."
+                            : L"Los ajustes gráficos se aplican la próxima vez que arranque el juego.");
     {   /* window size presets follow the two numbers */
         wchar_t w[32], h[32]; GetWindowTextW(g_s[S_WIDTH].hw, w, 32); GetWindowTextW(g_s[S_HEIGHT].hw, h, 32);
         int sel = 0;
@@ -330,7 +330,7 @@ static void update_ui(void) {
     int dirty = 0;
     for (int i = 0; i < S_COUNT; i++) dirty |= changed(&g_s[i]);
     EnableWindow(g_save, dirty);
-    if (!g_proc) SetWindowTextW(g_status, dirty ? L"Unsaved changes (Play saves them first)." : L"");
+    if (!g_proc) SetWindowTextW(g_status, dirty ? L"Cambios sin guardar (Jugar los guarda antes)." : L"");
 }
 
 static void load_all(void) {
@@ -374,8 +374,8 @@ static void load_all(void) {
             for (int k = S_LAYOUT; k < S_COUNT; k++) if (k != S_PROMPTS && k != S_INPUT && !_stricmp(key, g_s[k].key)) { g_devover++; counted = 1; break; }   /* prompts, input: [general] only */
         }
         wchar_t t[256];
-        if (g_devover) swprintf(t, 256, L"%d pad section(s) of controllers.ini set their own value of one of these; that value wins for that pad.", g_devover);
-        else swprintf(t, 256, L"Controller settings take effect at once, also while the game runs.");
+        if (g_devover) swprintf(t, 256, L"%d sección(es) de mando de controllers.ini fijan su propio valor de alguno de estos ajustes; ese valor manda para ese mando.", g_devover);
+        else swprintf(t, 256, L"Los ajustes del mando se aplican al instante, también con el juego en marcha.");
         SetWindowTextW(g_padnote, t);
     }
     for (int k = 0; k < 2; k++) ini_free(&f[k]);
@@ -388,7 +388,7 @@ static int save_all(void) {                                   /* 1 = saved (or n
         wchar_t w[32]; GetWindowTextW(g_s[i].hw, w, 32);
         int v = _wtoi(w);
         if (changed(&g_s[i]) && (v < g_s[i].nlo || v > g_s[i].nhi)) {
-            wchar_t m[128]; swprintf(m, 128, L"The window %s must be between %d and %d.", i == S_WIDTH ? L"width" : L"height", g_s[i].nlo, g_s[i].nhi);
+            wchar_t m[128]; swprintf(m, 128, L"El %s de la ventana debe estar entre %d y %d.", i == S_WIDTH ? L"ancho" : L"alto", g_s[i].nlo, g_s[i].nhi);
             MessageBoxW(g_main, m, L"Donelys B2recomp", MB_ICONWARNING);
             SetFocus(g_s[i].hw);
             return 0;
@@ -411,14 +411,14 @@ static int save_all(void) {                                   /* 1 = saved (or n
         int ok = ini_save(&f, g_ini[k]);
         ini_free(&f);
         if (!ok) {
-            wchar_t m[MAX_PATH + 64]; swprintf(m, MAX_PATH + 64, L"Could not write %s.", g_ini[k]);
+            wchar_t m[MAX_PATH + 64]; swprintf(m, MAX_PATH + 64, L"No se pudo escribir %s.", g_ini[k]);
             MessageBoxW(g_main, m, L"Donelys B2recomp", MB_ICONERROR);
             return 0;
         }
     }
     load_all();
     if (nch[0] + nch[1]) {
-        wchar_t t[128]; swprintf(t, 128, L"Saved: %d graphics and %d controller setting(s).", nch[0], nch[1]);
+        wchar_t t[128]; swprintf(t, 128, L"Guardado: %d ajuste(s) gráficos y %d de mando.", nch[0], nch[1]);
         if (!g_proc) SetWindowTextW(g_status, t);
     }
     return 1;
@@ -443,13 +443,13 @@ static int have_game(void) {
     wchar_t dll[MAX_PATH];
     swprintf(dll, MAX_PATH, L"%s\\game.dll", g_buildd);
     if (!file_exists(g_game) || !file_exists(dll)) {         /* a fresh clone: setup.py makes both from the player's dump */
-        MessageBoxW(g_main, L"The game is not built yet: start B2recomp with --build, or run python scripts/setup.py --dump <your dump>",
+        MessageBoxW(g_main, L"El juego aún no está compilado: abre B2recomp con --build, o ejecuta python scripts/setup.py --dump <tu volcado>",
                     L"Donelys B2recomp", MB_ICONINFORMATION);
         return 0;
     }
     if (file_exists(g_elf)) return 1;
     wchar_t m[MAX_PATH + 64];
-    swprintf(m, MAX_PATH + 64, L"Not found:\n%s", g_elf);
+    swprintf(m, MAX_PATH + 64, L"No se encuentra:\n%s", g_elf);
     MessageBoxW(g_main, m, L"Donelys B2recomp", MB_ICONERROR);
     return 0;
 }
@@ -461,7 +461,7 @@ static void run_tool(const wchar_t *args, const wchar_t *title) {   /* the pad t
     STARTUPINFOW si = { sizeof si };
     PROCESS_INFORMATION pi;
     if (CreateProcessW(NULL, cmd, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, g_buildd, &si, &pi)) { CloseHandle(pi.hThread); CloseHandle(pi.hProcess); }
-    else MessageBoxW(g_main, L"Could not start the controller tool.", L"Donelys B2recomp", MB_ICONERROR);
+    else MessageBoxW(g_main, L"No se pudo iniciar la herramienta del mando.", L"Donelys B2recomp", MB_ICONERROR);
 }
 /* finding 128: the game's exit code as the last line of its log, so a report has it. A crash that never reached the game's
    own handler (a fast-fail, a stack overflow, heap corruption, a crash inside the graphics driver) writes no line itself. */
@@ -521,14 +521,14 @@ static void play(void) {
     swprintf(cmd, 3 * MAX_PATH, L"\"%s\" \"%s\"", g_game, g_elf);
     BOOL ok = CreateProcessW(g_game, cmd, NULL, NULL, hl != INVALID_HANDLE_VALUE, CREATE_NO_WINDOW, NULL, g_buildd, &si, &pi);
     if (hl != INVALID_HANDLE_VALUE) CloseHandle(hl);
-    if (!ok) { MessageBoxW(g_main, L"Could not start build\\game_native.exe.", L"Donelys B2recomp", MB_ICONERROR); return; }
+    if (!ok) { MessageBoxW(g_main, L"No se pudo iniciar build\\game_native.exe.", L"Donelys B2recomp", MB_ICONERROR); return; }
     CloseHandle(pi.hThread);
     g_proc = pi.hProcess;
     g_play_t0 = GetTickCount64();
     if (hl != INVALID_HANDLE_VALUE) wcscpy(g_playlog, log); else g_playlog[0] = 0;
     EnableWindow(g_play, FALSE);
-    SetWindowTextW(g_play, L"Running");
-    SetWindowTextW(g_status, L"The game is running (log: build\\play\\stdout.txt).");
+    SetWindowTextW(g_play, L"En marcha");
+    SetWindowTextW(g_status, L"El juego está en marcha (registro: build\\play\\stdout.txt).");
 }
 
 /* ================================================================ window
@@ -581,7 +581,7 @@ static void mk_setting(int i, int lx, int cx, int cw, int y) {
         } else {
             s->hlabel = mk(L"STATIC", s->label, SS_LEFT, lx, y + 4, cx - lx - 6, 20, -1);
             s->hw = mk(L"BUTTON", L"", BS_AUTOCHECKBOX | WS_TABSTOP, cx, y + 2, 20, 20, id);
-            s->hval = mk(L"STATIC", L"On", SS_LEFT | SS_NOTIFY, cx + 24, y + 4, 60, 20, ID_LBL + i);
+            s->hval = mk(L"STATIC", L"Sí", SS_LEFT | SS_NOTIFY, cx + 24, y + 4, 60, 20, ID_LBL + i);
         }
     } else {
         if (s->label) s->hlabel = mk(L"STATIC", s->label, SS_LEFT, lx, y + 4, cx - lx - 6, 20, -1);
@@ -629,9 +629,9 @@ static void create_controls(void) {
     g_s[S_HEIGHT].hw = mk(L"EDIT", L"", ES_NUMBER | ES_CENTER | WS_BORDER | WS_TABSTOP, cx + 72, y, 56, 23, ID_SET + S_HEIGHT);
     SendMessageW(g_s[S_WIDTH].hw, EM_SETLIMITTEXT, 5, 0); SendMessageW(g_s[S_HEIGHT].hw, EM_SETLIMITTEXT, 5, 0);
     g_sizes = mk(L"COMBOBOX", L"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, cx + 136, y, cw - 136, 200, ID_SIZES);
-    SendMessageW(g_sizes, CB_ADDSTRING, 0, (LPARAM)L"Custom");
+    SendMessageW(g_sizes, CB_ADDSTRING, 0, (LPARAM)L"Personalizado");
     for (int i = 0; i < 5; i++) { wchar_t t[32]; swprintf(t, 32, L"%d x %d", k_sizes[i][0], k_sizes[i][1]); SendMessageW(g_sizes, CB_ADDSTRING, 0, (LPARAM)t); }
-    tip(g_s[S_WIDTH].hw, L"Client size of the window in windowed mode."); tip(g_s[S_HEIGHT].hw, L"Client size of the window in windowed mode.");
+    tip(g_s[S_WIDTH].hw, L"Tamaño del área de cliente de la ventana en modo ventana."); tip(g_s[S_HEIGHT].hw, L"Tamaño del área de cliente de la ventana en modo ventana.");
     y += dy;
     mk_setting(S_VSYNC, lx, cx, cw, y); y += dy;
     mk_setting(S_FPS, lx, cx, cw, y); y += dy;
@@ -652,16 +652,16 @@ static void create_controls(void) {
     mk_setting(S_DEADZONE, lx, cx, cw, y); y += dy;
     mk_setting(S_RUMBLE, lx, cx, cw, y); y += dy;
     mk_setting(S_STRENGTH, lx, cx, cw, y); y += dy + 12;
-    HWND b = mk(L"BUTTON", L"Remap controller...", BS_PUSHBUTTON | WS_TABSTOP, lx, y, pw - 32, 30, ID_REMAP);
-    tip(b, L"Runs game_native.exe --pad-map 1 in a console window: press each button it names on player 1's pad (skipped after 8 s). "
-           L"It writes a [device] section for that pad to controllers.ini.");
+    HWND b = mk(L"BUTTON", L"Reasignar mando...", BS_PUSHBUTTON | WS_TABSTOP, lx, y, pw - 32, 30, ID_REMAP);
+    tip(b, L"Ejecuta game_native.exe --pad-map 1 en una consola: pulsa cada botón que nombra en el mando del jugador 1 (se salta a los 8 s). "
+           L"Escribe en controllers.ini una sección [device] para ese mando.");
     y += 38;
-    b = mk(L"BUTTON", L"Test controller...", BS_PUSHBUTTON | WS_TABSTOP, lx, y, pw - 32, 30, ID_TEST);
-    tip(b, L"Runs game_native.exe --pad-test in a console window: lists the pads SDL sees and shows the buttons you press. Close the window to stop.");
+    b = mk(L"BUTTON", L"Probar mando...", BS_PUSHBUTTON | WS_TABSTOP, lx, y, pw - 32, 30, ID_TEST);
+    tip(b, L"Ejecuta game_native.exe --pad-test en una consola: lista los mandos que ve SDL y muestra los botones que pulsas. Cierra la ventana para parar.");
     y += 38;
-    b = mk(L"BUTTON", L"Keyboard and mouse...", BS_PUSHBUTTON | WS_TABSTOP, lx, y, pw - 32, 30, ID_KEYS);
-    tip(b, L"Rebind the keyboard and mouse (two keys or mouse buttons per action) and set the mouse camera. "
-           L"Writes the [keyboard] section of controllers.ini.");
+    b = mk(L"BUTTON", L"Teclado y ratón...", BS_PUSHBUTTON | WS_TABSTOP, lx, y, pw - 32, 30, ID_KEYS);
+    tip(b, L"Reasigna el teclado y el ratón (dos teclas o botones por acción) y configura la cámara con el ratón. "
+           L"Escribe la sección [keyboard] de controllers.ini.");
     y += 38;
     b = mk(L"BUTTON", L"HDR y color avanzado...", BS_PUSHBUTTON | WS_TABSTOP, lx, y, pw - 32, 30, ID_HDR);
     tip(b, L"HDR10 / scRGB: modo, blanco SDR, pico de luminancia y expansión de altas luces. Escribe las claves hdr* de graphics.ini.");
@@ -673,17 +673,17 @@ static void create_controls(void) {
     int x0 = px - 12 - 5 * bw - 4 * 8;                       /* [Recomps#1] Report..., Mods..., Config folder, Save, Close */
     g_status = mk(L"STATIC", L"", SS_LEFT, 16, by + 3, x0 - 16 - 16, 36, ID_STATUS);
     SendMessageW(g_status, WM_SETFONT, (WPARAM)g_smallfont, FALSE);
-    b = mk(L"BUTTON", L"Report...", BS_PUSHBUTTON | WS_TABSTOP, x0, by + 3, bw, 34, ID_REPORT);
-    tip(b, L"Makes b2recomp-report.zip in the B2recomp folder: the logs and this PC's details (Windows version, CPU, "
-           L"graphics card and driver), nothing of the game. Send it to whoever helps you.");
+    b = mk(L"BUTTON", L"Informe...", BS_PUSHBUTTON | WS_TABSTOP, x0, by + 3, bw, 34, ID_REPORT);
+    tip(b, L"Crea b2recomp-report.zip en la carpeta de B2recomp: los registros y los datos de este PC (versión de Windows, CPU, "
+           L"tarjeta gráfica y controlador), nada del juego. Envíalo a quien te ayude.");
     b = mk(L"BUTTON", L"Mods...", BS_PUSHBUTTON | WS_TABSTOP, x0 + (bw + 8), by + 3, bw, 34, ID_MODS);
-    tip(b, L"Code mods: switch the emulator patches (.pchtxt, .ips) in the mods folder on and off. They are compiled into the game, "
-           L"so a change needs a rebuild (about a minute; the window does it).");
-    b = mk(L"BUTTON", L"Config folder", BS_PUSHBUTTON | WS_TABSTOP, x0 + 2 * (bw + 8), by + 3, bw, 34, ID_CONFIG);
-    tip(b, L"Opens the folder with graphics.ini and controllers.ini (every option is explained there).");
-    g_save = mk(L"BUTTON", L"Save", BS_PUSHBUTTON | WS_TABSTOP, x0 + 3 * (bw + 8), by + 3, bw, 34, ID_SAVE);
-    mk(L"BUTTON", L"Close", BS_PUSHBUTTON | WS_TABSTOP, x0 + 4 * (bw + 8), by + 3, bw, 34, ID_CLOSE);
-    g_play = mk(L"BUTTON", L"Play", BS_OWNERDRAW | WS_TABSTOP, px, by, 150, 40, ID_PLAY);
+    tip(b, L"Mods de código: activa y desactiva los parches de emulador (.pchtxt, .ips) de la carpeta de mods. Se compilan dentro del juego, "
+           L"así que un cambio necesita recompilar (cerca de un minuto; lo hace la ventana).");
+    b = mk(L"BUTTON", L"Carpeta cfg", BS_PUSHBUTTON | WS_TABSTOP, x0 + 2 * (bw + 8), by + 3, bw, 34, ID_CONFIG);
+    tip(b, L"Abre la carpeta con graphics.ini y controllers.ini (cada opción está explicada allí).");
+    g_save = mk(L"BUTTON", L"Guardar", BS_PUSHBUTTON | WS_TABSTOP, x0 + 3 * (bw + 8), by + 3, bw, 34, ID_SAVE);
+    mk(L"BUTTON", L"Cerrar", BS_PUSHBUTTON | WS_TABSTOP, x0 + 4 * (bw + 8), by + 3, bw, 34, ID_CLOSE);
+    g_play = mk(L"BUTTON", L"Jugar", BS_OWNERDRAW | WS_TABSTOP, px, by, 150, 40, ID_PLAY);
     SetWindowSubclass(g_play, play_hover, 1, 0);
 }
 
@@ -696,20 +696,20 @@ static void create_controls(void) {
 enum { ID_KSLOT = 600, ID_KMOUSE = 700, ID_KSENS, ID_KINV, ID_KRESET, ID_KSAVE, ID_KCANCEL, ID_KSENSV, ID_KNOTE };
 #define KROWS 24
 static const struct { const char *key; const wchar_t *label; const char *def; } k_krow[KROWS] = {
-    {"LSTICK_UP", L"Move forward", "W"}, {"LSTICK_DOWN", L"Move back", "S"}, {"LSTICK_LEFT", L"Move left", "A"}, {"LSTICK_RIGHT", L"Move right", "D"},
-    {"X", L"Punch  (X)", "MOUSE1"}, {"A", L"Kick  (A)", "MOUSE2, ENTER"}, {"B", L"Jump  (B)", "SPACE, BACKSPACE"}, {"Y", L"Shoot  (Y)", "E, MOUSE3"},
-    {"ZR", L"Dodge  (ZR)", "LSHIFT"}, {"ZL", L"Lock-on  (ZL)", "LALT"}, {"L", L"Umbran Climax  (L)", "Q"}, {"R", L"R button", "F"},
-    {"RSTICK_UP", L"Camera up", "UP"}, {"RSTICK_DOWN", L"Camera down", "DOWN"}, {"RSTICK_LEFT", L"Camera left", "LEFT"}, {"RSTICK_RIGHT", L"Camera right", "RIGHT"},
-    {"STICK_R", L"Camera reset  (R stick)", "R"}, {"STICK_L", L"Left stick click", "C"}, {"PLUS", L"Pause  (+)", "ESC"}, {"MINUS", L"Minus  (-)", "TAB"},
-    {"UP", L"D-pad up", "1"}, {"RIGHT", L"D-pad right", "2"}, {"DOWN", L"D-pad down", "3"}, {"LEFT", L"D-pad left", "4"},
+    {"LSTICK_UP", L"Avanzar", "W"}, {"LSTICK_DOWN", L"Retroceder", "S"}, {"LSTICK_LEFT", L"Mover a la izquierda", "A"}, {"LSTICK_RIGHT", L"Mover a la derecha", "D"},
+    {"X", L"Puñetazo  (X)", "MOUSE1"}, {"A", L"Patada  (A)", "MOUSE2, ENTER"}, {"B", L"Saltar  (B)", "SPACE, BACKSPACE"}, {"Y", L"Disparar  (Y)", "E, MOUSE3"},
+    {"ZR", L"Esquivar  (ZR)", "LSHIFT"}, {"ZL", L"Fijar objetivo  (ZL)", "LALT"}, {"L", L"Umbran Climax  (L)", "Q"}, {"R", L"Botón R", "F"},
+    {"RSTICK_UP", L"Cámara arriba", "UP"}, {"RSTICK_DOWN", L"Cámara abajo", "DOWN"}, {"RSTICK_LEFT", L"Cámara a la izquierda", "LEFT"}, {"RSTICK_RIGHT", L"Cámara a la derecha", "RIGHT"},
+    {"STICK_R", L"Centrar cámara  (stick R)", "R"}, {"STICK_L", L"Pulsar stick izquierdo", "C"}, {"PLUS", L"Pausa  (+)", "ESC"}, {"MINUS", L"Menos  (-)", "TAB"},
+    {"UP", L"Cruceta arriba", "1"}, {"RIGHT", L"Cruceta derecha", "2"}, {"DOWN", L"Cruceta abajo", "3"}, {"LEFT", L"Cruceta izquierda", "4"},
 };
 static const struct { int vk; const char *name; const wchar_t *show; } k_vkn[] = {
-    {VK_LBUTTON, "MOUSE1", L"Left mouse"}, {VK_RBUTTON, "MOUSE2", L"Right mouse"}, {VK_MBUTTON, "MOUSE3", L"Middle mouse"},
-    {VK_XBUTTON1, "MOUSE4", L"Mouse 4"}, {VK_XBUTTON2, "MOUSE5", L"Mouse 5"}, {VK_LEFT, "LEFT", L"Left arrow"}, {VK_UP, "UP", L"Up arrow"},
-    {VK_RIGHT, "RIGHT", L"Right arrow"}, {VK_DOWN, "DOWN", L"Down arrow"}, {VK_RETURN, "ENTER", L"Enter"}, {VK_BACK, "BACKSPACE", L"Backspace"},
-    {VK_SPACE, "SPACE", L"Space"}, {VK_TAB, "TAB", L"Tab"}, {VK_ESCAPE, "ESC", L"Esc"}, {VK_SHIFT, "SHIFT", L"Shift"}, {VK_CONTROL, "CTRL", L"Ctrl"},
-    {VK_MENU, "ALT", L"Alt"}, {VK_LSHIFT, "LSHIFT", L"Left Shift"}, {VK_RSHIFT, "RSHIFT", L"Right Shift"}, {VK_LCONTROL, "LCTRL", L"Left Ctrl"},
-    {VK_RCONTROL, "RCTRL", L"Right Ctrl"}, {VK_LMENU, "LALT", L"Left Alt"}, {VK_RMENU, "RALT", L"Right Alt"},
+    {VK_LBUTTON, "MOUSE1", L"Ratón izquierdo"}, {VK_RBUTTON, "MOUSE2", L"Ratón derecho"}, {VK_MBUTTON, "MOUSE3", L"Ratón central"},
+    {VK_XBUTTON1, "MOUSE4", L"Ratón 4"}, {VK_XBUTTON2, "MOUSE5", L"Ratón 5"}, {VK_LEFT, "LEFT", L"Flecha izquierda"}, {VK_UP, "UP", L"Flecha arriba"},
+    {VK_RIGHT, "RIGHT", L"Flecha derecha"}, {VK_DOWN, "DOWN", L"Flecha abajo"}, {VK_RETURN, "ENTER", L"Intro"}, {VK_BACK, "BACKSPACE", L"Retroceso"},
+    {VK_SPACE, "SPACE", L"Espacio"}, {VK_TAB, "TAB", L"Tab"}, {VK_ESCAPE, "ESC", L"Esc"}, {VK_SHIFT, "SHIFT", L"Mayús"}, {VK_CONTROL, "CTRL", L"Ctrl"},
+    {VK_MENU, "ALT", L"Alt"}, {VK_LSHIFT, "LSHIFT", L"Mayús izq."}, {VK_RSHIFT, "RSHIFT", L"Mayús der."}, {VK_LCONTROL, "LCTRL", L"Ctrl izq."},
+    {VK_RCONTROL, "RCTRL", L"Ctrl der."}, {VK_LMENU, "LALT", L"Alt izq."}, {VK_RMENU, "RALT", L"Alt der."},
 };
 static HWND g_kwin, g_kslot[KROWS][2], g_ksens, g_ksensv, g_kmouse, g_kinv, g_knote;
 static int g_kv[KROWS][2], g_kv0[KROWS][2], g_kcap = -1, g_kmouse0, g_kinv0, g_ksens0;
@@ -761,7 +761,7 @@ static void ksens_show(void) {
 static void kshow_all(void) {
     for (int r = 0; r < KROWS; r++) for (int k = 0; k < 2; k++) {
         wchar_t t[48];
-        if (g_kcap == r * 2 + k) swprintf(t, 48, L"press a key...");
+        if (g_kcap == r * 2 + k) swprintf(t, 48, L"pulsa una tecla...");
         else kshow(g_kv[r][k], t, 48);
         SetWindowTextW(g_kslot[r][k], t);
     }
@@ -805,8 +805,8 @@ static int ksave(void) {
     if (sens != g_ksens0) { char v[16]; snprintf(v, sizeof v, "%.1f", sens / 10.0); ini_set(&f, "keyboard", "mouse_sensitivity", 1, v); n++; }
     int ok = !n || ini_save(&f, g_ini[F_PAD]);
     ini_free(&f);
-    if (!ok) { wchar_t m[MAX_PATH + 64]; swprintf(m, MAX_PATH + 64, L"Could not write %s.", g_ini[F_PAD]); MessageBoxW(g_kwin, m, L"Donelys B2recomp", MB_ICONERROR); return 0; }
-    wchar_t t[96]; swprintf(t, 96, L"Keyboard and mouse: %d setting(s) saved.", n);
+    if (!ok) { wchar_t m[MAX_PATH + 64]; swprintf(m, MAX_PATH + 64, L"No se pudo escribir %s.", g_ini[F_PAD]); MessageBoxW(g_kwin, m, L"Donelys B2recomp", MB_ICONERROR); return 0; }
+    wchar_t t[96]; swprintf(t, 96, L"Teclado y ratón: %d ajuste(s) guardados.", n);
     if (!g_proc) SetWindowTextW(g_status, t);
     return 1;
 }
@@ -815,13 +815,13 @@ static void kassign(int vk) {                           /* the slot waiting for 
     wchar_t t[160] = L"";
     if (vk) for (int r2 = 0; r2 < KROWS; r2++) for (int k2 = 0; k2 < 2; k2++) if ((r2 != r || k2 != k) && g_kv[r2][k2] == vk) {
         wchar_t nm[48]; kshow(vk, nm, 48);
-        swprintf(t, 160, L"%s moved here from %s.", nm, k_krow[r2].label);
+        swprintf(t, 160, L"%s pasa aquí desde %s.", nm, k_krow[r2].label);
         g_kv[r2][k2] = 0;
     }
     g_kv[r][k] = vk;
     g_kcap = -1;
     kshow_all();
-    SetWindowTextW(g_knote, t[0] ? t : L"Click a slot, then press a key or a mouse button. Delete clears a slot.");
+    SetWindowTextW(g_knote, t[0] ? t : L"Haz clic en una casilla y pulsa una tecla o un botón del ratón. Supr borra la casilla.");
 }
 /* the launcher's message loop asks this first: while a slot waits, the next key or mouse button in this window is its key */
 static int kcapture(const MSG *m) {
@@ -861,7 +861,7 @@ static LRESULT CALLBACK kwndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
     switch (m) {
     case WM_CREATE: {
         g_kwin = w;
-        HWND t = kmk(L"STATIC", L"Two keys or mouse buttons per action. The layout follows the original Bayonetta on PC.", SS_LEFT, 20, 14, KW_W - 40, 20, -1);
+        HWND t = kmk(L"STATIC", L"Dos teclas o botones del ratón por acción. La distribución sigue la del Bayonetta original de PC.", SS_LEFT, 20, 14, KW_W - 40, 20, -1);
         (void)t;
         for (int r = 0; r < KROWS; r++) {
             int col = r / 12, row = r % 12, x = 20 + col * 440, y = 46 + row * 32;
@@ -870,20 +870,20 @@ static LRESULT CALLBACK kwndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
         }
         int y = 46 + 12 * 32 + 14;
         g_kmouse = kmk(L"BUTTON", L"", BS_AUTOCHECKBOX | WS_TABSTOP, 20, y + 2, 20, 20, ID_KMOUSE);
-        kmk(L"STATIC", L"The mouse moves the camera", SS_LEFT, 44, y + 4, 220, 20, -1);
-        kmk(L"STATIC", L"Mouse sensitivity", SS_LEFT, 300, y + 4, 130, 20, -1);
+        kmk(L"STATIC", L"El ratón mueve la cámara", SS_LEFT, 44, y + 4, 220, 20, -1);
+        kmk(L"STATIC", L"Sensibilidad del ratón", SS_LEFT, 300, y + 4, 130, 20, -1);
         g_ksens = kmk(TRACKBAR_CLASSW, L"", TBS_HORZ | WS_TABSTOP, 430, y, 200, 26, ID_KSENS);
         SendMessageW(g_ksens, TBM_SETRANGE, TRUE, MAKELPARAM(1, 50));
         SendMessageW(g_ksens, TBM_SETTICFREQ, 5, 0);
         g_ksensv = kmk(L"STATIC", L"", SS_LEFT, 636, y + 4, 40, 20, ID_KSENSV);
         g_kinv = kmk(L"BUTTON", L"", BS_AUTOCHECKBOX | WS_TABSTOP, 690, y + 2, 20, 20, ID_KINV);
-        kmk(L"STATIC", L"Invert vertical", SS_LEFT, 714, y + 4, 160, 20, -1);
+        kmk(L"STATIC", L"Invertir vertical", SS_LEFT, 714, y + 4, 160, 20, -1);
         y += 40;
-        g_knote = kmk(L"STATIC", L"Click a slot, then press a key or a mouse button. Delete clears a slot.", SS_LEFT, 20, y + 8, 470, 34, ID_KNOTE);
+        g_knote = kmk(L"STATIC", L"Haz clic en una casilla y pulsa una tecla o un botón del ratón. Supr borra la casilla.", SS_LEFT, 20, y + 8, 470, 34, ID_KNOTE);
         SendMessageW(g_knote, WM_SETFONT, (WPARAM)g_smallfont, FALSE);
-        kmk(L"BUTTON", L"Reset to defaults", BS_PUSHBUTTON | WS_TABSTOP, 500, y, 150, 34, ID_KRESET);
-        kmk(L"BUTTON", L"Save", BS_PUSHBUTTON | WS_TABSTOP, 660, y, 100, 34, ID_KSAVE);
-        kmk(L"BUTTON", L"Cancel", BS_PUSHBUTTON | WS_TABSTOP, 770, y, 100, 34, ID_KCANCEL);
+        kmk(L"BUTTON", L"Valores predeterminados", BS_PUSHBUTTON | WS_TABSTOP, 500, y, 150, 34, ID_KRESET);
+        kmk(L"BUTTON", L"Guardar", BS_PUSHBUTTON | WS_TABSTOP, 660, y, 100, 34, ID_KSAVE);
+        kmk(L"BUTTON", L"Cancelar", BS_PUSHBUTTON | WS_TABSTOP, 770, y, 100, 34, ID_KCANCEL);
         kload(0);
         return 0;
     }
@@ -900,8 +900,8 @@ static LRESULT CALLBACK kwndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
         if (id >= ID_KSLOT && id < ID_KSLOT + KROWS * 2) {
             g_kcap = id - ID_KSLOT;
             kshow_all();
-            SetWindowTextW(g_knote, L"Press a key or click a mouse button for this slot (Delete clears it).");
-        } else if (id == ID_KRESET) { kload(1); SetWindowTextW(g_knote, L"Defaults restored: Save keeps them."); }
+            SetWindowTextW(g_knote, L"Pulsa una tecla o un botón del ratón para esta casilla (Supr la borra).");
+        } else if (id == ID_KRESET) { kload(1); SetWindowTextW(g_knote, L"Valores predeterminados restaurados: Guardar los conserva."); }
         else if (id == ID_KSAVE) { if (ksave()) DestroyWindow(w); }
         else if (id == ID_KCANCEL || id == IDCANCEL) DestroyWindow(w);
         return 0;
@@ -925,7 +925,7 @@ static void keys_window(void) {
     AdjustWindowRectEx(&r, style, FALSE, WS_EX_CONTROLPARENT | WS_EX_DLGMODALFRAME);
     RECT mr; GetWindowRect(g_main, &mr);
     int ww = r.right - r.left, wh = r.bottom - r.top;
-    HWND w = CreateWindowExW(WS_EX_CONTROLPARENT | WS_EX_DLGMODALFRAME, L"B2recompKeys", L"Keyboard and mouse", style,
+    HWND w = CreateWindowExW(WS_EX_CONTROLPARENT | WS_EX_DLGMODALFRAME, L"B2recompKeys", L"Teclado y ratón", style,
                              mr.left + (mr.right - mr.left - ww) / 2, mr.top + (mr.bottom - mr.top - wh) / 2, ww, wh, g_main, NULL, GetModuleHandleW(NULL), NULL);
     if (!w) return;
     {   BOOL on = TRUE; COLORREF text = RGB(200, 214, 240);  /* the main window's dark title bar */
@@ -980,7 +980,7 @@ static void hdr_real_text(void) {                            /* the last "hdr:" 
     while (fp && fgets(line, sizeof line, fp)) if (!strncmp(line, "hdr: ", 5) && !strstr(line, "SELFTEST")) { snprintf(last, sizeof last, "%s", line); }
     if (fp) fclose(fp);
     wchar_t w[700] = L"Último arranque: sin registro de HDR (SDR, o el juego aún no se ha ejecutado desde el launcher).";
-    if (last[0]) { last[strcspn(last, "\r\n")] = 0; swprintf(w, 700, L"Último arranque: %hs", last + 5); }
+    if (last[0]) { last[strcspn(last, "\r\n")] = 0; wchar_t u[600]; MultiByteToWideChar(CP_UTF8, 0, last + 5, -1, u, 600); swprintf(w, 700, L"Último arranque: %s", u); }      /* the log is UTF-8 */
     SetWindowTextW(g_hreal, w);
 }
 static int hdr_save(void) {
@@ -1141,9 +1141,9 @@ static void paint(HWND w) {
     SelectObject(dc, g_headfont); SetTextColor(dc, RGB(150, 178, 226));
     spaced_text(dc, L"BAYONETTA 2 RECOMPILED  ·  EDICIÓN DONELYS", S(18), S(14), S(3));
     SelectObject(dc, g_smallfont); SetTextColor(dc, RGB(150, 178, 226));      /* credit kept in sight: GPL-3.0 chain of origin */
-    TextOutW(dc, S(18), S(HEADER) - S(24), L"Basado en B2recomp de K0NL y ssbu-recomp de Denkishi  ·  GPL-3.0", 63);
+    { static const wchar_t k_credit[] = L"Basado en B2recomp de K0NL y ssbu-recomp de Denkishi  ·  GPL-3.0"; TextOutW(dc, S(18), S(HEADER) - S(52), k_credit, (int)wcslen(k_credit)); }
     HPEN edge = CreatePen(PS_SOLID, 1, C_EDGE), gold = CreatePen(PS_SOLID, S(2), C_GOLD);
-    static const wchar_t *k_title[2] = { L"GRAPHICS", L"CONTROLLER" };
+    static const wchar_t *k_title[2] = { L"GRÁFICOS", L"MANDO" };
     for (int k = 0; k < (g_mode ? 1 : 2); k++) {
         const RECT *pr = g_mode ? &k_bpanel : &k_panel[k];
         RECT p = { S(pr->left), S(pr->top), S(pr->right), S(pr->bottom) };
@@ -1154,7 +1154,7 @@ static void paint(HWND w) {
         MoveToEx(dc, p.left + S(16), p.top + S(36), NULL); LineTo(dc, p.left + S(52), p.top + S(36));
         SelectObject(dc, op); SelectObject(dc, obr);
         SetTextColor(dc, C_GOLD);
-        spaced_text(dc, g_mode ? L"BUILD THE GAME" : k_title[k], p.left + S(16), p.top + S(12), S(3));
+        spaced_text(dc, g_mode ? L"COMPILAR EL JUEGO" : k_title[k], p.left + S(16), p.top + S(12), S(3));
     }
     DeleteObject(edge); DeleteObject(gold);
     BitBlt(wdc, 0, 0, rc.right, rc.bottom, dc, 0, 0, SRCCOPY);
@@ -1201,9 +1201,9 @@ enum { ID_BPATH = 400, ID_BBROWSE, ID_BUILD, ID_BLOGS, ID_BCHECK, ID_BLOG, ID_BP
 enum { WM_APP_LINE = WM_APP + 1, WM_APP_DONE };
 #define NSTEP 10
 #define BSTEP_COMPILE 6                                     /* index of setup.py's compile step */
-static const wchar_t *k_step_name[NSTEP] = { L"Check the bundled tools", L"Check your dump", L"Convert the program files",
-    L"Apply your code mods (if any)", L"Generate tables", L"Translate the game code", L"Compile it (the longest step)", L"Make the icon",
-    L"Link the game and the launcher", L"Self-test" };
+static const wchar_t *k_step_name[NSTEP] = { L"Comprobar las herramientas incluidas", L"Comprobar tu volcado", L"Convertir los archivos del programa",
+    L"Aplicar tus mods de código (si hay)", L"Generar tablas", L"Traducir el código del juego", L"Compilarlo (el paso más largo)", L"Crear el icono",
+    L"Enlazar el juego y el launcher", L"Autoprueba" };
 static const int k_step_weight[NSTEP] = { 1, 2, 1, 1, 2, 11, 240, 1, 8, 2 };   /* seconds on a 16-thread PC (finding 102) */
 static int g_bstate[NSTEP];                                 /* 0 waiting, 1 running, 2 done, 3 failed */
 static int g_bok, g_bcompile, g_bundled;                    /* dump folder looks right; compile per mille; deps\python */
@@ -1255,16 +1255,16 @@ static void dump_check(void) {                              /* does the folder i
     const wchar_t *msg;
     g_bok = 0;
     swprintf(a, MAX_PATH + 32, L"%s\\exefs\\main", g_dump); swprintf(b, MAX_PATH + 32, L"%s\\romfs", g_dump);
-    if (!*g_dump) msg = L"Drag the folder that holds exefs\\ and romfs\\ onto this window, or choose it with Browse.";
-    else if (!is_dir(g_dump)) msg = L"This folder does not exist.";
+    if (!*g_dump) msg = L"Arrastra a esta ventana la carpeta que contiene exefs\\ y romfs\\, o elígela con Examinar.";
+    else if (!is_dir(g_dump)) msg = L"Esta carpeta no existe.";
     else if (swprintf(a, MAX_PATH + 32, L"%s\\main.npdm", g_dump), file_exists(a))
-        msg = L"This is the exefs folder itself: choose the folder above it, the one that holds exefs\\ and romfs\\.";
+        msg = L"Esta es la propia carpeta exefs: elige la de arriba, la que contiene exefs\\ y romfs\\.";
     else if (swprintf(a, MAX_PATH + 32, L"%s\\data000.cpk", g_dump), file_exists(a))
-        msg = L"This is the romfs folder itself: choose the folder above it, the one that holds exefs\\ and romfs\\.";
+        msg = L"Esta es la propia carpeta romfs: elige la de arriba, la que contiene exefs\\ y romfs\\.";
     else if (swprintf(a, MAX_PATH + 32, L"%s\\exefs\\main", g_dump), !file_exists(a))
-        msg = L"No exefs\\main here: choose the folder that holds exefs\\ and romfs\\.";
-    else if (!is_dir(b)) msg = L"No romfs\\ folder here: the dump needs both exefs\\ and romfs\\.";
-    else { g_bok = 1; msg = L"\x2713  exefs\\ and romfs\\ found. Press Build: the exact game version is checked first."; }
+        msg = L"No hay exefs\\main aquí: elige la carpeta que contiene exefs\\ y romfs\\.";
+    else if (!is_dir(b)) msg = L"No hay carpeta romfs\\ aquí: el volcado necesita exefs\\ y romfs\\.";
+    else { g_bok = 1; msg = L"\x2713  exefs\\ y romfs\\ encontrados. Pulsa Compilar: antes se comprueba la versión exacta del juego."; }
     SetWindowTextW(g_bcheck, msg);
     InvalidateRect(g_bcheck, NULL, TRUE);
     EnableWindow(g_bbtn, g_bok && !g_bproc);
@@ -1363,14 +1363,14 @@ static DWORD WINAPI reader(LPVOID arg) {                   /* setup.py's stdout,
 static void build_enable(int on) {
     EnableWindow(g_bpath, on); EnableWindow(g_bbrowse, on);
     EnableWindow(g_bbtn, on && g_bok);
-    SetWindowTextW(g_bbtn, on ? L"Build" : L"Building");
+    SetWindowTextW(g_bbtn, on ? L"Compilar" : L"Compilando");
 }
 /* python scripts\setup.py <args> in a hidden console of its own inside a job object (closing *job stops it and every
    compiler it started); its output arrives at window `to` as WM_APP_LINE (one line, malloc'd) and WM_APP_DONE (exit code) */
 static int start_setup(const wchar_t *args, HWND to, HANDLE *proc, HANDLE *job) {
     if (!*g_python) {
-        MessageBoxW(to, L"Python was not found. The builder package brings its own in deps\\python; from the source, install "
-                        L"Python 3.10+ (python.org) and start this again.", L"Donelys B2recomp", MB_ICONERROR);
+        MessageBoxW(to, L"No se encontró Python. El paquete constructor trae el suyo en deps\\python; desde el código fuente, instala "
+                        L"Python 3.10+ (python.org) y vuelve a abrir esto.", L"Donelys B2recomp", MB_ICONERROR);
         return 0;
     }
     if (g_bundled) {                                        /* only the bundled tools: nothing of this PC's setup may leak in */
@@ -1395,7 +1395,7 @@ static int start_setup(const wchar_t *args, HWND to, HANDLE *proc, HANDLE *job) 
     BOOL ok = CreateProcessW(g_python, cmd, NULL, NULL, TRUE, CREATE_NEW_CONSOLE | CREATE_SUSPENDED, NULL, g_root, &si, &pi);
     CloseHandle(wr);
     if (nul != INVALID_HANDLE_VALUE) CloseHandle(nul);
-    if (!ok) { CloseHandle(rd); MessageBoxW(to, L"Could not start scripts\\setup.py.", L"Donelys B2recomp", MB_ICONERROR); return 0; }
+    if (!ok) { CloseHandle(rd); MessageBoxW(to, L"No se pudo iniciar scripts\\setup.py.", L"Donelys B2recomp", MB_ICONERROR); return 0; }
     *job = CreateJobObjectW(NULL, NULL);
     JOBOBJECT_EXTENDED_LIMIT_INFORMATION li = { 0 };
     li.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
@@ -1444,14 +1444,14 @@ static void build_done(DWORD code) {
         create_controls();
         load_all();
         set_window_icon(g_main);
-        swprintf(t, 256, L"Built in %lu min %02lu s. Ready: press Play.", (unsigned long)(s / 60), (unsigned long)(s % 60));
+        swprintf(t, 256, L"Compilado en %lu min %02lu s. Listo: pulsa Jugar.", (unsigned long)(s / 60), (unsigned long)(s % 60));
         SetWindowTextW(g_status, t);
         InvalidateRect(g_main, NULL, TRUE);
         SetFocus(g_play);
         return;
     }
     for (int i = 0; i < NSTEP; i++) if (g_bstate[i] == 1) { g_bstate[i] = 3; step_show(i); }
-    swprintf(t, 256, L"The build stopped after %lu min %02lu s: the log says why. Fix it and press Build again (finished steps are kept).",
+    swprintf(t, 256, L"La compilación se detuvo tras %lu min %02lu s: el registro dice por qué. Corrígelo y pulsa Compilar otra vez (los pasos terminados se conservan).",
              (unsigned long)(s / 60), (unsigned long)(s % 60));
     SetWindowTextW(g_status, t);
     build_enable(1);
@@ -1462,7 +1462,7 @@ static void browse(void) {
     DWORD o = 0;
     IFileOpenDialog_GetOptions(d, &o);
     IFileOpenDialog_SetOptions(d, o | FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM);
-    IFileOpenDialog_SetTitle(d, L"Your dump folder (the one that holds exefs and romfs)");
+    IFileOpenDialog_SetTitle(d, L"Tu carpeta de volcado (la que contiene exefs y romfs)");
     if (SUCCEEDED(IFileOpenDialog_Show(d, g_main))) {
         IShellItem *it;
         if (SUCCEEDED(IFileOpenDialog_GetResult(d, &it))) {
@@ -1476,14 +1476,14 @@ static void browse(void) {
 static void create_build_controls(void) {
     const RECT *p = &k_bpanel;
     int lx = p->left + 16, w = p->right - p->left - 32;
-    g_bintro = mk(L"STATIC", L"B2recomp builds the game on this PC from your own extracted copy of Bayonetta 2, version 1.2 "
-                             L"(update v131072). Nothing of the game is downloaded; it takes about 5 minutes on a fast PC.",
+    g_bintro = mk(L"STATIC", L"B2recomp compila el juego en este PC a partir de tu propia copia extraída de Bayonetta 2, versión 1.2 "
+                             L"(actualización v131072). No se descarga nada del juego; tarda unos 5 minutos en un PC rápido.",
                   SS_LEFT, lx, p->top + 46, w, 36, -1);
-    g_blabel = mk(L"STATIC", L"Dump folder", SS_LEFT, lx, p->top + 96, 100, 20, -1);
+    g_blabel = mk(L"STATIC", L"Carpeta de volcado", SS_LEFT, lx, p->top + 96, 100, 20, -1);
     g_bpath = mk(L"EDIT", L"", ES_AUTOHSCROLL | WS_BORDER | WS_TABSTOP, lx + 100, p->top + 92, w - 100 - 108, 24, ID_BPATH);
-    g_bbrowse = mk(L"BUTTON", L"Browse...", BS_PUSHBUTTON | WS_TABSTOP, p->right - 16 - 100, p->top + 91, 100, 26, ID_BBROWSE);
-    tip(g_bpath, L"The folder you extracted from your own console and copy: it holds exefs\\ (main, sdk, subsdk0, rtld, main.npdm) "
-                 L"and romfs\\, optionally sysdata\\fonts\\ and control\\. Encrypted packages are not accepted.");
+    g_bbrowse = mk(L"BUTTON", L"Examinar...", BS_PUSHBUTTON | WS_TABSTOP, p->right - 16 - 100, p->top + 91, 100, 26, ID_BBROWSE);
+    tip(g_bpath, L"La carpeta que extrajiste de tu propia consola y copia: contiene exefs\\ (main, sdk, subsdk0, rtld, main.npdm) "
+                 L"y romfs\\, y opcionalmente sysdata\\fonts\\ y control\\. No se aceptan paquetes cifrados.");
     g_bcheck = mk(L"STATIC", L"", SS_LEFT, lx + 100, p->top + 122, w - 100, 20, ID_BCHECK);
     int y = p->top + 160;
     for (int i = 0; i < NSTEP; i++) g_bstep[i] = mk(L"STATIC", L"", SS_LEFT, lx, y + i * 22, 270, 20, ID_BSTEP0 + i);
@@ -1498,20 +1498,20 @@ static void create_build_controls(void) {
     SendMessageW(g_bprog, PBM_SETBKCOLOR, 0, (LPARAM)C_FIELD);
     int by = p->bottom + 12, px = WIN_W - 14 - 150;
     g_status = mk(L"STATIC", L"", SS_LEFT | SS_ENDELLIPSIS, 16, by + 11, px - 12 - 3 * 90 - 2 * 8 - 16 - 16, 20, ID_STATUS);
-    g_breport = mk(L"BUTTON", L"Report...", BS_PUSHBUTTON | WS_TABSTOP, px - 12 - 3 * 90 - 2 * 8, by + 3, 90, 34, ID_REPORT);
-    tip(g_breport, L"Makes b2recomp-report.zip in the B2recomp folder: the build logs and this PC's details, nothing of "
-                   L"the game. Send it to whoever helps you.");
-    g_blogs = mk(L"BUTTON", L"Logs folder", BS_PUSHBUTTON | WS_TABSTOP, px - 12 - 2 * 90 - 8, by + 3, 90, 34, ID_BLOGS);
-    tip(g_blogs, L"Opens build\\logs: one log per step (setup.py).");
-    g_bclose = mk(L"BUTTON", L"Close", BS_PUSHBUTTON | WS_TABSTOP, px - 12 - 90, by + 3, 90, 34, ID_CLOSE);
-    g_bbtn = mk(L"BUTTON", L"Build", BS_OWNERDRAW | WS_TABSTOP, px, by, 150, 40, ID_BUILD);
+    g_breport = mk(L"BUTTON", L"Informe...", BS_PUSHBUTTON | WS_TABSTOP, px - 12 - 3 * 90 - 2 * 8, by + 3, 90, 34, ID_REPORT);
+    tip(g_breport, L"Crea b2recomp-report.zip en la carpeta de B2recomp: los registros de compilación y los datos de este PC, nada de "
+                   L"el juego. Envíalo a quien te ayude.");
+    g_blogs = mk(L"BUTTON", L"Registros", BS_PUSHBUTTON | WS_TABSTOP, px - 12 - 2 * 90 - 8, by + 3, 90, 34, ID_BLOGS);
+    tip(g_blogs, L"Abre build\\logs: un registro por paso (setup.py).");
+    g_bclose = mk(L"BUTTON", L"Cerrar", BS_PUSHBUTTON | WS_TABSTOP, px - 12 - 90, by + 3, 90, 34, ID_CLOSE);
+    g_bbtn = mk(L"BUTTON", L"Compilar", BS_OWNERDRAW | WS_TABSTOP, px, by, 150, 40, ID_BUILD);
     SetWindowSubclass(g_bbtn, play_hover, 1, 0);
     for (int i = 0; i < NSTEP; i++) step_show(i);
     prefill_dump();
     dump_check();
     DragAcceptFiles(g_main, TRUE);
-    SetWindowTextW(g_status, *g_python ? L"Choose your dump folder, then press Build."
-                                       : L"Python was not found: the builder package brings its own (deps\\python).");
+    SetWindowTextW(g_status, *g_python ? L"Elige tu carpeta de volcado y pulsa Compilar."
+                                       : L"No se encontró Python: el paquete constructor trae el suyo (deps\\python).");
 }
 
 /* ================================================================ code mods window
@@ -1535,8 +1535,8 @@ static HANDLE g_mproc, g_mjob;
 static DWORD g_mt0;
 static char g_mwant[80], g_mbuilt[80];                      /* fingerprint of the switches as saved / of the build */
 static wchar_t g_merr[600], g_modsini[MAX_PATH], g_modsdir[MAX_PATH];
-static const wchar_t *k_mstep[NSTEP] = { L"checking the tools", L"checking the dump", L"converting", L"applying the mods",
-    L"generating tables", L"translating", L"compiling", L"icon", L"linking", L"self-test" };
+static const wchar_t *k_mstep[NSTEP] = { L"comprobando herramientas", L"comprobando el volcado", L"convirtiendo", L"aplicando mods",
+    L"generando tablas", L"traduciendo", L"compilando", L"icono", L"enlazando", L"autoprueba" };
 
 static void utf8w(const char *s, wchar_t *o, int n) { if (!MultiByteToWideChar(CP_UTF8, 0, s, -1, o, n)) o[0] = 0; o[n - 1] = 0; }
 static int mod_on(int i) { for (; i >= 0; i = g_mi[i].parent) if (!g_mi[i].on) return 0; return 1; }   /* with its parents */
@@ -1580,7 +1580,7 @@ static char *run_capture(const wchar_t *cmd) {
  * window and the build screen (notes/roadmap.md "Later ideas", 2026-10-18). */
 static void make_report(HWND owner) {
     if (!*g_python) {
-        MessageBoxW(owner, L"Python was not found: the builder package brings its own (deps\\python).", L"Donelys B2recomp", MB_ICONERROR);
+        MessageBoxW(owner, L"No se encontró Python: el paquete constructor trae el suyo (deps\\python).", L"Donelys B2recomp", MB_ICONERROR);
         return;
     }
     wchar_t cmd[4 * MAX_PATH], zip[MAX_PATH];
@@ -1590,15 +1590,15 @@ static void make_report(HWND owner) {
     char *out = run_capture(cmd);
     SetCursor(old);
     if (!out || !file_exists(zip)) {
-        MessageBoxW(owner, L"The report could not be made (scripts\\report.py did not finish).", L"Donelys B2recomp", MB_ICONERROR);
+        MessageBoxW(owner, L"No se pudo crear el informe (scripts\\report.py no terminó).", L"Donelys B2recomp", MB_ICONERROR);
         free(out);
         return;
     }
     free(out);
-    if (!g_proc && g_status) SetWindowTextW(g_status, L"Report made: b2recomp-report.zip in the B2recomp folder.");
+    if (!g_proc && g_status) SetWindowTextW(g_status, L"Informe creado: b2recomp-report.zip en la carpeta de B2recomp.");
     wchar_t m[MAX_PATH + 320];
-    swprintf(m, MAX_PATH + 320, L"Report made:\n%s\n\nIt holds the logs and this PC's details, nothing of the game. Send that file "
-             L"to whoever helps you, and say what happened.\n\nOpen its folder?", zip);
+    swprintf(m, MAX_PATH + 320, L"Informe creado:\n%s\n\nContiene los registros y los datos de este PC, nada del juego. Envía ese archivo "
+             L"a quien te ayude y cuéntale qué pasó.\n\n¿Abrir su carpeta?", zip);
     if (MessageBoxW(owner, m, L"B2recomp", MB_YESNO | MB_ICONINFORMATION) == IDYES) {
         wchar_t args[MAX_PATH + 16];
         swprintf(args, MAX_PATH + 16, L"/select,\"%s\"", zip);
@@ -1626,13 +1626,13 @@ static void mods_status(void) {
     wchar_t t[400];
     if (g_mproc) {
         DWORD s = (GetTickCount() - g_mt0) / 1000;
-        swprintf(t, 400, L"Rebuilding... %lu:%02lu   (%s)", (unsigned long)(s / 60), (unsigned long)(s % 60), g_mstep >= 0 ? k_mstep[g_mstep] : L"starting");
-    } else if (!*g_python) wcscpy(t, L"Python was not found: the mod list and the rebuild need it.");
-    else if (mods_dirty() && !mods_dirty_code()) wcscpy(t, L"Changed. Apply saves it: RomFS files need no rebuild (read when the game starts).");
-    else if (mods_dirty()) wcscpy(t, L"Changed. Apply (rebuild) saves the switches and builds the game with them.");
-    else if (!strcmp(g_mwant, "error")) wcscpy(t, L"A mod that is on cannot be used (marked with !): switch it off or remove it.");
-    else if (strcmp(g_mwant, g_mbuilt)) wcscpy(t, L"The game was built with other mods than these: press Apply (rebuild).");
-    else wcscpy(t, !strcmp(g_mwant, "none") ? L"The game is built without code mods." : L"The game is built with these mods.");
+        swprintf(t, 400, L"Recompilando... %lu:%02lu   (%s)", (unsigned long)(s / 60), (unsigned long)(s % 60), g_mstep >= 0 ? k_mstep[g_mstep] : L"iniciando");
+    } else if (!*g_python) wcscpy(t, L"No se encontró Python: la lista de mods y la recompilación lo necesitan.");
+    else if (mods_dirty() && !mods_dirty_code()) wcscpy(t, L"Cambiado. Aplicar lo guarda: los archivos RomFS no necesitan recompilar (se leen al arrancar el juego).");
+    else if (mods_dirty()) wcscpy(t, L"Cambiado. Aplicar guarda los interruptores y compila el juego con ellos.");
+    else if (!strcmp(g_mwant, "error")) wcscpy(t, L"Un mod activado no se puede usar (marcado con !): desactívalo o quítalo.");
+    else if (strcmp(g_mwant, g_mbuilt)) wcscpy(t, L"El juego se compiló con otros mods distintos: pulsa Aplicar.");
+    else wcscpy(t, !strcmp(g_mwant, "none") ? L"El juego está compilado sin mods de código." : L"El juego está compilado con estos mods.");
     SetWindowTextW(g_mstatus, t);
     EnableWindow(g_mapply, !g_mproc && *g_python);
 }
@@ -1642,17 +1642,17 @@ static void mods_note(void) {                               /* the selected item
     int i = -1;
     for (int k = 0; k < g_mn; k++) if (g_mi[k].h == h) i = k;
     if (i < 0) {
-        if (!g_mn) swprintf(t, 1400, L"No mods in %s. Copy an emulator mod's folder there as it is (exefs\\ code patches, romfs\\ files), then Refresh.", g_modsdir);
+        if (!g_mn) swprintf(t, 1400, L"No hay mods en %s. Copia allí tal cual la carpeta de un mod de emulador (parches de código exefs\\, archivos romfs\\) y pulsa Actualizar.", g_modsdir);
         else if (*g_merr) swprintf(t, 1400, L"%s", g_merr);
-        else swprintf(t, 1400, L"Select a mod to see its details. Grey = switched off by itself or with the mod or file above it.");
+        else swprintf(t, 1400, L"Selecciona un mod para ver sus detalles. Gris = desactivado por sí mismo o con el mod o archivo de arriba.");
     } else {
         wchar_t key[600]; utf8w(g_mi[i].key, key, 600);
-        const wchar_t *what = g_mi[i].kind == MK_BLOCK ? (g_mi[i].def ? L"block, written under @enabled" : L"block, written under @disabled (off unless switched on here)")
-                            : g_mi[i].kind == MK_FILE ? L"file" : L"mod";
+        const wchar_t *what = g_mi[i].kind == MK_BLOCK ? (g_mi[i].def ? L"bloque, escrito bajo @enabled" : L"bloque, escrito bajo @disabled (apagado salvo que lo actives aquí)")
+                            : g_mi[i].kind == MK_FILE ? L"archivo" : L"mod";
         wchar_t lines[48] = L"";
-        if (g_mi[i].kind == MK_BLOCK) swprintf(lines, 48, L", %d patch line%s", g_mi[i].nrec, g_mi[i].nrec == 1 ? L"" : L"s");
-        const wchar_t *rf = g_mi[i].romfs == 2 ? L"\nRomFS files only (textures, models, sounds...): the game reads them when it starts, no rebuild needed."
-                          : g_mi[i].romfs ? L"\nAlso has RomFS files: switching the mod off leaves them out as well (no rebuild needed for those)." : L"";
+        if (g_mi[i].kind == MK_BLOCK) swprintf(lines, 48, L", %d línea%s de parche", g_mi[i].nrec, g_mi[i].nrec == 1 ? L"" : L"s");
+        const wchar_t *rf = g_mi[i].romfs == 2 ? L"\nSolo archivos RomFS (texturas, modelos, sonidos...): el juego los lee al arrancar, sin recompilar."
+                          : g_mi[i].romfs ? L"\nTambién tiene archivos RomFS: al desactivar el mod también se omiten (esos no necesitan recompilar)." : L"";
         swprintf(t, 1400, L"%s   (%s%s)%s%s%s%s%s", key, what, lines, g_mi[i].note[0] ? L"\n" : L"", g_mi[i].note, rf,
                  g_mi[i].info[0] ? L"\n" : L"", g_mi[i].info);
     }
@@ -1674,7 +1674,7 @@ static void mods_load(void) {                               /* (re)reads the lis
         swprintf(cmd, 4 * MAX_PATH, L"\"%s\" -I \"%s\\scripts\\pchtxt.py\" tree \"%s\" %s%s%s \"%s\"", g_python, g_root, g_modsdir,
                  file_exists(nso) ? L"\"" : L"", file_exists(nso) ? nso : L"", file_exists(nso) ? L"\"" : L"", ini);
         out = run_capture(cmd);
-        if (!out) swprintf(g_merr, 600, L"scripts\\pchtxt.py tree failed: run it in a console to see why.");
+        if (!out) swprintf(g_merr, 600, L"scripts\\pchtxt.py tree falló: ejecútalo en una consola para ver por qué.");
     }
     int cap = 0, cur_mod = -1, cur_file = -1;
     for (char *line = out, *next; line && *line; line = next) {
@@ -1712,8 +1712,8 @@ static void mods_load(void) {                               /* (re)reads the lis
         for (int k = 0; k < keep_n; k++) if (keep[k].on != keep[k].on0 && !strcmp(keep[k].key, it->key)) it->on = keep[k].on;
         wchar_t text[400];
         swprintf(text, 400, L"%s%s%s", it->note[0] ? L"! " : L"", it->label,
-                 kind == MK_BLOCK && !it->def ? L"   (@disabled in the file)"
-                 : it->romfs == 2 ? L"   (RomFS files: no rebuild)" : it->romfs ? L"   (+ RomFS files)" : L"");
+                 kind == MK_BLOCK && !it->def ? L"   (@disabled en el archivo)"
+                 : it->romfs == 2 ? L"   (archivos RomFS: sin recompilar)" : it->romfs ? L"   (+ archivos RomFS)" : L"");
         TVINSERTSTRUCTW ins = { 0 };
         ins.hParent = it->parent >= 0 ? g_mi[it->parent].h : TVI_ROOT;
         ins.hInsertAfter = TVI_LAST;
@@ -1813,7 +1813,7 @@ static int mods_save(void) {
     for (int i = 0; i < g_mn; i++) if (g_mi[i].on != g_mi[i].on0) mods_set(&f, g_mi[i].key, g_mi[i].on ? "on" : "off");
     int ok = ini_save(&f, g_modsini);
     ini_free(&f);
-    if (!ok) { wchar_t m[MAX_PATH + 64]; swprintf(m, MAX_PATH + 64, L"Could not write %s.", g_modsini); MessageBoxW(g_mwin, m, L"Donelys B2recomp", MB_ICONERROR); return 0; }
+    if (!ok) { wchar_t m[MAX_PATH + 64]; swprintf(m, MAX_PATH + 64, L"No se pudo escribir %s.", g_modsini); MessageBoxW(g_mwin, m, L"Donelys B2recomp", MB_ICONERROR); return 0; }
     for (int i = 0; i < g_mn; i++) g_mi[i].on0 = g_mi[i].on;
     return 1;
 }
@@ -1883,11 +1883,11 @@ static int game_running(void) {                             /* build\game_native
 static void mods_apply(void) {
     if (g_mproc) return;
     int rebuild = mods_dirty_code() || strcmp(g_mwant, g_mbuilt);   /* else only RomFS-only mods changed */
-    if (rebuild && game_running()) { MessageBoxW(g_mwin, L"The game is running: close it first (the rebuild replaces build\\game.dll).", L"Donelys B2recomp", MB_ICONINFORMATION); return; }
+    if (rebuild && game_running()) { MessageBoxW(g_mwin, L"El juego está en marcha: ciérralo antes (la recompilación reemplaza build\\game.dll).", L"Donelys B2recomp", MB_ICONINFORMATION); return; }
     if (!mods_save()) return;
     if (!rebuild) {
         mods_load();
-        SetWindowTextW(g_mstatus, L"Saved. RomFS mods need no rebuild: the game reads them the next time it starts.");
+        SetWindowTextW(g_mstatus, L"Guardado. Los mods RomFS no necesitan recompilar: el juego los lee la próxima vez que arranque.");
         return;
     }
     if (!start_setup(L"", g_mwin, &g_mproc, &g_mjob)) return;
@@ -1907,8 +1907,8 @@ static void mods_done(DWORD code) {
     DWORD s = (GetTickCount() - g_mt0) / 1000;
     mods_load();
     wchar_t t[300];
-    if (code == 0) swprintf(t, 300, L"Rebuilt in %lu:%02lu. The game has these mods from the next Play.", (unsigned long)(s / 60), (unsigned long)(s % 60));
-    else swprintf(t, 300, L"The rebuild stopped (the log says why). Fix it and press Apply again, before you play.");
+    if (code == 0) swprintf(t, 300, L"Recompilado en %lu:%02lu. El juego lleva estos mods desde el próximo Jugar.", (unsigned long)(s / 60), (unsigned long)(s % 60));
+    else swprintf(t, 300, L"La recompilación se detuvo (el registro dice por qué). Corrígelo y pulsa Aplicar de nuevo antes de jugar.");
     SetWindowTextW(g_mstatus, t);
 }
 #define MW_W 760
@@ -1924,9 +1924,9 @@ static LRESULT CALLBACK mwndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
     switch (m) {
     case WM_CREATE: {
         g_mwin = w;
-        mmk(L"STATIC", L"The mods in the mods folder, switched on and off as in an emulator. Code patches (.pchtxt, .ips) are compiled "
-                       L"into the game: a change to them takes effect after Apply (rebuild), about a minute, with the game closed. "
-                       L"RomFS files (textures, models, sounds) are read when the game starts.", SS_LEFT, 20, 14, MW_W - 40, 54, -1);
+        mmk(L"STATIC", L"Los mods de la carpeta de mods, activados y desactivados como en un emulador. Los parches de código (.pchtxt, .ips) se compilan "
+                       L"dentro del juego: un cambio en ellos se aplica tras Aplicar, cerca de un minuto, con el juego cerrado. "
+                       L"Los archivos RomFS (texturas, modelos, sonidos) se leen al arrancar el juego.", SS_LEFT, 20, 14, MW_W - 40, 54, -1);
         g_mtree = mmk(WC_TREEVIEWW, L"", WS_BORDER | WS_TABSTOP | TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS,
                       20, 74, MW_W - 40, 232, ID_MTREE);
         SetWindowLongPtrW(g_mtree, GWL_STYLE, GetWindowLongPtrW(g_mtree, GWL_STYLE) | TVS_CHECKBOXES);   /* after creation, as documented */
@@ -1934,7 +1934,7 @@ static LRESULT CALLBACK mwndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
         mmk(L"STATIC", L"Perfil:", SS_LEFT, 20, 318, 56, 24, -1);
         g_mprof = mmk(L"COMBOBOX", L"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, 78, 314, 300, 200, ID_MPROFILE);
         HWND pb = mmk(L"BUTTON", L"Cargar perfil", BS_PUSHBUTTON | WS_TABSTOP, 386, 312, 120, 30, ID_MPROFAPPLY);
-        tip(pb, L"Marca los mods del perfil elegido (config\\perfiles). «Juego original» los desactiva todos. Después pulsa Apply.");
+        tip(pb, L"Marca los mods del perfil elegido (config\\perfiles). «Juego original» los desactiva todos. Después pulsa Aplicar.");
         mods_profiles_fill();
         g_mnote = mmk(L"STATIC", L"", SS_LEFT, 20, 350, MW_W - 40, 84, ID_MNOTE);
         SendMessageW(g_mnote, WM_SETFONT, (WPARAM)g_smallfont, FALSE);
@@ -1945,14 +1945,14 @@ static LRESULT CALLBACK mwndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
         SetWindowTheme(g_mlog, L"DarkMode_Explorer", NULL);
         int by = 566;
         g_mstatus = mmk(L"STATIC", L"", SS_LEFT, 20, by, 300, 40, ID_MSTATUS);
-        HWND b = mmk(L"BUTTON", L"Mods folder", BS_PUSHBUTTON | WS_TABSTOP, 330, by, 100, 34, ID_MFOLDER);
-        tip(b, L"Opens mods\\ (made when missing): put .pchtxt / .ips files or an emulator mod's folder there.");
-        b = mmk(L"BUTTON", L"Refresh", BS_PUSHBUTTON | WS_TABSTOP, 438, by, 84, 34, ID_MREFRESH);
-        tip(b, L"Reads the mods folder again (switches you changed and did not apply yet are kept).");
-        g_mapply = mmk(L"BUTTON", L"Apply (rebuild)", BS_PUSHBUTTON | WS_TABSTOP, 530, by, 120, 34, ID_MAPPLY);
-        tip(g_mapply, L"Saves the switches to config\\mods.ini and runs scripts\\setup.py: the mods step patches main.elf, then only "
-                      L"what changed is translated and compiled again, and the game is linked (about a minute).");
-        mmk(L"BUTTON", L"Close", BS_PUSHBUTTON | WS_TABSTOP, 658, by, 82, 34, ID_MCLOSE);
+        HWND b = mmk(L"BUTTON", L"Carpeta mods", BS_PUSHBUTTON | WS_TABSTOP, 330, by, 100, 34, ID_MFOLDER);
+        tip(b, L"Abre mods\\ (se crea si falta): pon allí archivos .pchtxt / .ips o la carpeta de un mod de emulador.");
+        b = mmk(L"BUTTON", L"Actualizar", BS_PUSHBUTTON | WS_TABSTOP, 438, by, 84, 34, ID_MREFRESH);
+        tip(b, L"Vuelve a leer la carpeta de mods (los interruptores que cambiaste y no aplicaste se conservan).");
+        g_mapply = mmk(L"BUTTON", L"Aplicar", BS_PUSHBUTTON | WS_TABSTOP, 530, by, 120, 34, ID_MAPPLY);
+        tip(g_mapply, L"Guarda los interruptores en config\\mods.ini y ejecuta scripts\\setup.py: el paso de mods parchea main.elf y después solo "
+                      L"se traduce y compila de nuevo lo que cambió, y se enlaza el juego (cerca de un minuto).");
+        mmk(L"BUTTON", L"Cerrar", BS_PUSHBUTTON | WS_TABSTOP, 658, by, 82, 34, ID_MCLOSE);
         mods_load();
         return 0;
     }
@@ -2011,13 +2011,13 @@ static LRESULT CALLBACK mwndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
     }
     case WM_CLOSE:
         if (g_mproc) {
-            if (MessageBoxW(w, L"Stop the rebuild? Press Apply again later: the game must be rebuilt before you play.", L"B2recomp", MB_YESNO | MB_ICONQUESTION) != IDYES) return 0;
+            if (MessageBoxW(w, L"¿Detener la recompilación? Pulsa Aplicar más tarde: el juego debe recompilarse antes de jugar.", L"B2recomp", MB_YESNO | MB_ICONQUESTION) != IDYES) return 0;
             g_mclosing = 1;
             TerminateJobObject(g_mjob, 1);
             return 0;                                       /* WM_APP_DONE follows and closes the window */
         }
         if (mods_dirty()) {
-            int r = MessageBoxW(w, L"Save the changed switches (without rebuilding)?", L"B2recomp", MB_YESNOCANCEL | MB_ICONQUESTION);
+            int r = MessageBoxW(w, L"¿Guardar los interruptores cambiados (sin recompilar)?", L"B2recomp", MB_YESNOCANCEL | MB_ICONQUESTION);
             if (r == IDCANCEL || (r == IDYES && !mods_save())) return 0;
         }
         DestroyWindow(w);
@@ -2062,7 +2062,7 @@ static LRESULT CALLBACK wndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
         else {
             create_controls();
             load_all();
-            if (!g_exists[F_GFX] || !g_exists[F_PAD]) SetWindowTextW(g_status, L"A config file is missing: the game writes it, with comments, at its first start.");
+            if (!g_exists[F_GFX] || !g_exists[F_PAD]) SetWindowTextW(g_status, L"Falta un archivo de configuración: el juego lo escribe, con comentarios, en su primer arranque.");
         }
         SetTimer(w, ID_TIMER, 500, NULL);
         return 0;
@@ -2120,8 +2120,8 @@ static LRESULT CALLBACK wndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
         } else if (id >= ID_SET && id < ID_SET + S_COUNT) {
             if (!g_loading && (code == CBN_SELCHANGE || code == EN_CHANGE || code == BN_CLICKED)) update_ui();
         } else if (id >= ID_LBL && id < ID_LBL + S_COUNT && code == STN_CLICKED) SendMessageW(g_s[id - ID_LBL].hw, BM_CLICK, 0, 0);
-        else if (id == ID_REMAP) run_tool(L"--pad-map 1", L"Remap controller (player 1)");
-        else if (id == ID_TEST) run_tool(L"--pad-test", L"Test controller");
+        else if (id == ID_REMAP) run_tool(L"--pad-map 1", L"Reasignar mando (jugador 1)");
+        else if (id == ID_TEST) run_tool(L"--pad-test", L"Probar mando");
         else if (id == ID_KEYS) keys_window();
         else if (id == ID_HDR) hdr_window();
         else if (id == ID_MODS) mods_window();
@@ -2138,16 +2138,16 @@ static LRESULT CALLBACK wndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
             wchar_t t[128];
             compile_progress();
             progress_update();
-            if (g_bstate[5] == 1) swprintf(t, 128, L"Building... %lu:%02lu   (compiling: %d %%)", (unsigned long)(s / 60), (unsigned long)(s % 60), g_bcompile / 10);
-            else swprintf(t, 128, L"Building... %lu:%02lu", (unsigned long)(s / 60), (unsigned long)(s % 60));
+            if (g_bstate[5] == 1) swprintf(t, 128, L"Compilando... %lu:%02lu   (compilando: %d %%)", (unsigned long)(s / 60), (unsigned long)(s % 60), g_bcompile / 10);
+            else swprintf(t, 128, L"Compilando... %lu:%02lu", (unsigned long)(s / 60), (unsigned long)(s % 60));
             SetWindowTextW(g_status, t);
         }
         if (g_proc && WaitForSingleObject(g_proc, 0) == WAIT_OBJECT_0) {
             DWORD code = 0; GetExitCodeProcess(g_proc, &code);
             CloseHandle(g_proc); g_proc = NULL;
             log_exit(code);
-            EnableWindow(g_play, TRUE); SetWindowTextW(g_play, L"Play");
-            wchar_t t[128]; swprintf(t, 128, L"The game has exited (code %ld; log: build\\play\\stdout.txt).", (long)code);
+            EnableWindow(g_play, TRUE); SetWindowTextW(g_play, L"Jugar");
+            wchar_t t[128]; swprintf(t, 128, L"El juego se ha cerrado (código %ld; registro: build\\play\\stdout.txt).", (long)code);
             SetWindowTextW(g_status, t);
         }
         return 0;
@@ -2161,7 +2161,7 @@ static LRESULT CALLBACK wndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
     }
     case WM_CLOSE: {
         if (g_mode) {
-            if (g_bproc && MessageBoxW(w, L"Stop the build? The steps already finished are kept.", L"B2recomp", MB_YESNO | MB_ICONQUESTION) != IDYES) return 0;
+            if (g_bproc && MessageBoxW(w, L"¿Detener la compilación? Los pasos ya terminados se conservan.", L"B2recomp", MB_YESNO | MB_ICONQUESTION) != IDYES) return 0;
             if (g_bjob) TerminateJobObject(g_bjob, 1);
             DestroyWindow(w);
             return 0;
@@ -2169,7 +2169,7 @@ static LRESULT CALLBACK wndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
         int dirty = 0;
         for (int i = 0; i < S_COUNT; i++) dirty |= changed(&g_s[i]);
         if (dirty) {
-            int r = MessageBoxW(w, L"Save the changed settings?", L"B2recomp", MB_YESNOCANCEL | MB_ICONQUESTION);
+            int r = MessageBoxW(w, L"¿Guardar los ajustes cambiados?", L"B2recomp", MB_YESNOCANCEL | MB_ICONQUESTION);
             if (r == IDCANCEL || (r == IDYES && !save_all())) return 0;
         }
         DestroyWindow(w);
