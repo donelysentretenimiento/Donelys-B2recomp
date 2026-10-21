@@ -306,7 +306,10 @@ static void audio_OpenDefaultAudioOut(Ctx *c) {       /* (AudioOut *, nn::os::Sy
             char exe[MAX_PATH] = "";
             GetModuleFileNameA(NULL, exe, sizeof exe);
             const char *base = strrchr(exe, '\\') ? strrchr(exe, '\\') + 1 : exe, *vol = getenv("SSBU_VOLUME");
-            int percent = vol ? atoi(vol) : (!_stricmp(base, "ssbu_native.exe") || !_stricmp(base, "ssbu_user.exe") || !_stricmp(base, "game_native.exe")) ? 100 : 0;   /* [Recomps#1] our exe is audible */
+            /* edición mejorada (issue #25 "No sound"): audible whatever the exe is called; only the test scripts (SSBU_SEQ /
+               SSBU_SCRIPT) are silent by default. Before, a renamed exe (a Steam shortcut copy, a wrapper) played muted. */
+            (void)base;
+            int percent = vol ? atoi(vol) : (getenv("SSBU_SEQ") || getenv("SSBU_SCRIPT")) ? 0 : 100;
             if (percent < 0) percent = 0;
             if (percent > 100) percent = 100;
             DWORD level = (DWORD)(0xffff * percent / 100);
