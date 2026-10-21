@@ -1,0 +1,16 @@
+name: Mods
+description: Carga, conflicto, perfil o reconstrucción / Loading, conflict, profile, or rebuild
+title: "[Mods] "
+labels: [mods]
+body:
+  - type: input
+    id: version
+    attributes: {label: Versión o commit / Version or commit}
+    validations: {required: true}
+  - type: textarea
+    id: mod
+    attributes: {label: Tipo y procedencia del mod / Mod type and source, description: No adjuntes el mod salvo que tengas permiso. / Do not attach the mod unless you have permission.}
+  - type: textarea
+    id: reproduction
+    attributes: {label: Perfil, conflictos, pasos y resultado / Profile, conflicts, steps, and result}
+    validations: {required: true}

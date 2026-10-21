@@ -45,6 +45,8 @@
 # ---- 5. launcher (source only; art and icon come from the user's own files at build time)
 !/launcher/launcher.c
 !/launcher/launcher.manifest
+!/launcher/i18n.c
+!/launcher/i18n.h
 
 # ---- 6. scripts (only the keyless versions; see the audit for the ones that must change first)
 !/scripts/build_launcher.py
@@ -88,6 +90,15 @@
 
 # ---- 8. documentation written for the public (never notes/, evidence/, CLAUDE.md)
 !/docs/*.md
+!/docs/_config.yml
+!/docs/es/
+!/docs/es/**
+!/docs/en/
+!/docs/en/**
+!/docs/github/
+!/docs/github/**
+!/.github/
+!/.github/**
 
 # ---- 9. belt and braces: these never go in, even if a rule above would match
 **/__pycache__/
@@ -153,5 +164,22 @@
 !/EVIDENCIAS_Y_CRONOLOGIA.md
 !/GUIA_COMPILACION.md
 !/ESTADO_DEL_PROYECTO.md
+!/TRADEMARKS.md
+!/CITATION.cff
+!/CONTRIBUTING.md
+!/SECURITY.md
+!/CODE_OF_CONDUCT.md
+!/CONTINUIDAD_CODEX.md
 !/docs/autoría-y-contribuciones/
 !/docs/autoría-y-contribuciones/**
+
+# ---- HDR (edicion mejorada)
+!/scripts/hdr_run.ps1
+!/scripts/test_hdr_color.bat
+!/scripts/check_public_repo.py
+!/scripts/test_launcher_i18n.bat
+!/tests/
+!/tests/hdr_color_test.c
+!/tests/hdr_probe.c
+!/tests/test_check_public_repo.py
+!/tests/launcher_i18n_test.c

@@ -1,0 +1,9 @@
+# Repository owner reviews public-facing and release-sensitive changes.
+* @donelysentretenimiento
+/.github/ @donelysentretenimiento
+/README.md @donelysentretenimiento
+/LICENSE @donelysentretenimiento
+/NOTICE.md @donelysentretenimiento
+/TRADEMARKS.md @donelysentretenimiento
+/scripts/make_package.py @donelysentretenimiento
+/runtime/hdr_* @donelysentretenimiento
