@@ -43,10 +43,13 @@ Actualizado: 2026-10-22 (Europe/Madrid).
 - `main` remoto comprobado en `a3745a8d9a3afaea9565d7f35b2e5c2a12b6ae51`.
 - `hdr-nativo` remoto comprobado en `f5d03e537a8bc08ea386d2cdfb165b57d69389bb`: 9 commits por delante, 0 por detrás y 21 archivos distintos.
 - GitHub público: rama predeterminada `main`; ramas `main` y `hdr-nativo`; una release `v0.2.7-donelys-hdr-preview1` marcada como pre-release; Pages desactivada; sin workflows ni rulesets visibles al inicio.
+- Rama documental publicada: `donelys-github-main`, basada directamente en `main` y sin los 9 commits HDR.
+- Pull Request de revisión: `#1`, abierta como borrador contra `main`.
+- Descripción y topics del repositorio actualizados y verificados (`bayonetta-2`, `static-recompilation`, `vulkan`, `hdr10`, `scrgb`, `windows`, `game-modding`, `mods`, `donelys`).
 - Commit de documentación: `4c34e77` (`docs: add autonomous bilingual project guides`).
 - Añadidos README bilingüe, `docs/es`, `docs/en`, portada de Pages, instalación/compilación propia y estado STABLE/PREVIEW/EXPERIMENTAL.
 - Preparados `TRADEMARKS.md`, `CITATION.cff`, `CONTRIBUTING.md`, `SECURITY.md`, `CODEOWNERS`, plantillas de incidencias/PR y propuesta de rulesets.
-- Preparado workflow `Repository checks` con permisos `contents: read`; no se considera activo hasta publicarlo y observar una ejecución.
+- Preparado workflow `Repository checks` con permisos `contents: read`; no se publicó porque el token HTTPS carece del scope `workflow`. No se considera CI activa.
 - Pruebas locales: `python -m unittest tests.test_check_public_repo -v` = 3/3; `python scripts/check_public_repo.py` = correcto.
 
 ## Cambios locales preservados fuera de los commits documentales
@@ -56,7 +59,7 @@ Actualizado: 2026-10-22 (Europe/Madrid).
 
 ## Próximo paso exacto
 
-Publicar la rama `donelys-identidad-bilingue`, observar `repository-checks` y abrir una Pull Request revisable. Para llevar la portada y guías a `main`, preparar un cambio documental basado en `main` o revisar explícitamente el alcance de la PR; no fusionar automáticamente los 9 commits de `hdr-nativo`.
+Revisar la Pull Request `#1`. Antes de marcarla lista para fusionar, validar los formularios de Issues en la interfaz y decidir si se autoriza el scope `workflow` para añadir `Repository checks`; después aplicar rulesets sólo cuando el nombre del check esté confirmado. No fusionar automáticamente los 9 commits de `hdr-nativo`.
 
 ## Notas para Claude Code
 
