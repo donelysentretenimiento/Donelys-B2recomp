@@ -44,6 +44,31 @@ static void hdr_cfg_init(void) {
     if (e) H.cfg.mode = !_stricmp(e, "auto") ? 1 : !_stricmp(e, "hdr10") ? 2 : !_stricmp(e, "scrgb") ? 3 : 0;
 }
 
+/* The menu's HDR settings are written back to graphics.ini (the four hdr keys; every other line is kept as it is). */
+static void hdr_persist(void) {
+    static const char *const k_mode[4] = {"off", "auto", "hdr10", "scrgb"};
+    const char *path = gfx_options()->path;
+    char key[4][32] = {"hdr", "hdr_sdr_white", "hdr_peak", "hdr_expand"}, val[4][16], *buf = NULL, *out;
+    snprintf(val[0], 16, "%s", k_mode[H.cfg.mode & 3]); snprintf(val[1], 16, "%d", H.cfg.sdr_white); snprintf(val[2], 16, "%d", H.cfg.peak); snprintf(val[3], 16, "%d", H.cfg.expand);
+    FILE *f = fopen(path, "rb"); long n = 0;
+    if (f) { fseek(f, 0, SEEK_END); n = ftell(f); fseek(f, 0, SEEK_SET); buf = malloc((size_t)n + 1); if (buf && fread(buf, 1, (size_t)n, f) != (size_t)n) n = 0; fclose(f); }
+    if (!buf) return;
+    buf[n] = 0;
+    out = malloc((size_t)n + 512); if (!out) { free(buf); return; }
+    size_t o = 0; int done[4] = {0, 0, 0, 0};
+    for (char *line = buf; *line; ) {
+        char *e = strchr(line, '\n'); size_t len = e ? (size_t)(e - line) + 1 : strlen(line);
+        int hit = -1;
+        for (int k = 0; k < 4; k++) { size_t kl = strlen(key[k]); if (!strncmp(line, key[k], kl) && (line[kl] == ' ' || line[kl] == '=')) hit = k; }
+        if (hit >= 0 && !done[hit]) { o += (size_t)sprintf(out + o, "%s = %s\r\n", key[hit], val[hit]); done[hit] = 1; }
+        else { memcpy(out + o, line, len); o += len; }
+        line += len;
+    }
+    for (int k = 0; k < 4; k++) if (!done[k]) o += (size_t)sprintf(out + o, "%s = %s\r\n", key[k], val[k]);
+    f = fopen(path, "wb"); if (f) { fwrite(out, 1, o, f); fclose(f); }
+    free(buf); free(out);
+}
+
 /* ---- pipeline */
 static VkShaderModule hdr_shader(int stage, const char *src) { return menu_shader(stage, src); }
 static void hdr_pipe_free(void) {
@@ -185,7 +210,7 @@ static int hdr_swapchain_made(void) {
     H.made = 1;
     if (!H.set_md && g_hdr_has_metadata) H.set_md = (PFN_vkSetHdrMetadataEXT)vkGetDeviceProcAddr(V.device, "vkSetHdrMetadataEXT");
     hdr_set_metadata();
-    { static int st; if (!st && getenv("SSBU_HDR_SELFTEST")) { st = 1; hdr_selftest(); } }
+    { static int st; if (!st && getenv("SSBU_HDR_SELFTEST")) { st = 1; hdr_selftest(); hdr_persist(); } }      /* TEST: the selftest also writes the settings back (point SSBU_GRAPHICS_CONFIG at a copy) */
     snprintf(H.shown, sizeof H.shown, "%s", H.mode == HDR_HDR10 ? "HDR10 · PQ · Rec.2020 · 10 bits" : "scRGB · lineal · FP16");
     printf("hdr: ACTIVE %s (swapchain format %d, colour space %d); SDR white %.0f nits, peak %.0f nits, expansion %d %%; monitor %s max %.0f nits; metadata %s\n", H.shown, (int)H.sc.format, (int)H.sc.colorSpace,
            hdr_sdr_white(), hdr_peak(), H.cfg.expand, H.win.device, H.win.max_nits, H.set_md && H.mode == HDR_HDR10 ? "sent" : "not sent");

@@ -11,7 +11,7 @@ $env:SSBU_ROMFS = Join-Path $root 'targets\romfs'
 $env:SSBU_USERDATA = "$run\userdata"
 $env:SSBU_SHOW = if ($Show) { '1' } else { '0' }; $env:SSBU_VOLUME = if ($Show) { '100' } else { '0' }
 $env:SSBU_FOCUS_NOTIFY = '0'
-$env:SSBU_GRAPHICS_CONFIG = Join-Path $root 'config\graphics.ini'
+if (-not $env:SSBU_GRAPHICS_CONFIG) { $env:SSBU_GRAPHICS_CONFIG = Join-Path $root 'config\graphics.ini' }      # a test can point it at a copy
 $env:SSBU_CONFIG = Join-Path $root 'config\controllers.ini'
 $env:SSBU_HDR = if ($Hdr) { $Hdr } else { $null }
 $env:SSBU_VK_VALIDATE = if ($Validate) { '1' } else { $null }

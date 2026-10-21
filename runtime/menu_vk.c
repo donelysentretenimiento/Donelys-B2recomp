@@ -267,13 +267,6 @@ static void rows_build(void) {
     case MC_GRAFICOS: {
         const GfxOptions *g = gfx_options();
         static const char *const wm[] = {"Ventana", "Sin bordes", "Pantalla completa"}, *const pm[] = {"Reloj propio 60 Hz", "Vsync (FIFO)", "Sin vsync", "Mailbox", "Pantalla", "Automático"};
-        row(0, 1, 0, "Renderizador", "Vulkan", NULL);
-        snprintf(v, sizeof v, "%s · %ux%u", wm[g->window_mode % 3], V.extent.width, V.extent.height); row(0, 1, 0, "Ventana", v, NULL);
-        snprintf(v, sizeof v, "x%.2f (%dx%d)", g->scale, (int)(1280 * g->scale), (int)(720 * g->scale)); row(0, 1, 0, "Resolución interna", v, NULL);
-        snprintf(v, sizeof v, "%s", pm[g->present >= 0 && g->present < 6 ? g->present : 0]); row(0, 1, 0, "Sincronización", v, NULL);
-        snprintf(v, sizeof v, "%d fps", g->frame_rate ? g->frame_rate : 60); row(0, 1, g->frame_rate > 60 ? 3 : 1, "Objetivo", v, g->frame_rate > 60 ? "Por encima de 60 algunos temporizadores del juego cambian." : "La velocidad original del juego.");
-        snprintf(v, sizeof v, "%s", g->aniso ? (g->aniso == 16 ? "16x" : g->aniso == 8 ? "8x" : g->aniso == 4 ? "4x" : "2x") : "del juego"); row(0, 1, 0, "Filtrado anisotrópico", v, NULL);
-        snprintf(v, sizeof v, "%s · Vulkan %u.%u", V.props.deviceName, VK_API_VERSION_MAJOR(V.props.apiVersion), VK_API_VERSION_MINOR(V.props.apiVersion)); row(0, 1, 0, "GPU", v, NULL);
         {   static const char *const hm[] = {"Desactivado", "Automático", "HDR10", "scRGB"};
             hdr_cfg_init();
             row(1, 1, H.cfg.mode ? 1 : 0, "HDR · modo pedido", hm[H.cfg.mode & 3], "Cambia en vivo (se rehace la presentación). Necesita HDR activado en Windows para este monitor.");
@@ -284,6 +277,13 @@ static void rows_build(void) {
             row(1, 1, 0, "HDR · pico de luminancia", v, "Máximo que puede alcanzar la expansión de altas luces.");
             snprintf(v, sizeof v, "%d %%", H.cfg.expand); row(1, 1, H.cfg.expand ? 3 : 0, "HDR · expansión de luces", v, "Opcional: realza las zonas claras de la imagen SDR. 0 % = fiel al original.");
         }
+        row(0, 1, 0, "Renderizador", "Vulkan", NULL);
+        snprintf(v, sizeof v, "%s · %ux%u", wm[g->window_mode % 3], V.extent.width, V.extent.height); row(0, 1, 0, "Ventana", v, NULL);
+        snprintf(v, sizeof v, "x%.2f (%dx%d)", g->scale, (int)(1280 * g->scale), (int)(720 * g->scale)); row(0, 1, 0, "Resolución interna", v, NULL);
+        snprintf(v, sizeof v, "%s", pm[g->present >= 0 && g->present < 6 ? g->present : 0]); row(0, 1, 0, "Sincronización", v, NULL);
+        snprintf(v, sizeof v, "%d fps", g->frame_rate ? g->frame_rate : 60); row(0, 1, g->frame_rate > 60 ? 3 : 1, "Objetivo", v, g->frame_rate > 60 ? "Por encima de 60 algunos temporizadores del juego cambian." : "La velocidad original del juego.");
+        snprintf(v, sizeof v, "%s", g->aniso ? (g->aniso == 16 ? "16x" : g->aniso == 8 ? "8x" : g->aniso == 4 ? "4x" : "2x") : "del juego"); row(0, 1, 0, "Filtrado anisotrópico", v, NULL);
+        snprintf(v, sizeof v, "%s · Vulkan %u.%u", V.props.deviceName, VK_API_VERSION_MAJOR(V.props.apiVersion), VK_API_VERSION_MINOR(V.props.apiVersion)); row(0, 1, 0, "GPU", v, NULL);
         row(0, 1, 0, "Cambiar ajustes", "En el launcher", "Los ajustes gráficos se guardan en B2recomp.exe; los de HDR de este menú valen hasta cerrar el juego.");
         break; }
     case MC_MODS:
@@ -346,13 +346,13 @@ static void menu_change(int delta) {
             M.weapon = n;
             menu_say("Arma de la ranura A: %s.", k_weapons[n].name);
         }
-    } else if (M.cat == MC_GRAFICOS && M.row >= 7 && M.row <= 11) {         /* HDR rows (rows_build): mode, (real mode), SDR white, peak, expansion */
-        int *p = M.row == 7 ? &H.cfg.mode : M.row == 9 ? &H.cfg.sdr_white : M.row == 10 ? &H.cfg.peak : &H.cfg.expand;
-        if (M.row == 7) *p = (*p + delta + 4) % 4;
-        else if (M.row == 9) { int w = (int)hdr_sdr_white() + delta * 10; *p = w < 80 ? 0 : w > 500 ? 500 : w; }
-        else if (M.row == 10) { int w = (int)hdr_peak() + delta * 100; *p = w < 400 ? 0 : w > 10000 ? 10000 : w; }
-        else { int w = *p + delta * 10; *p = w < 0 ? 0 : w > 100 ? 100 : w; }
-        menu_say("%s cambiado.", g_rows[M.row].label);
+    } else if (M.cat == MC_GRAFICOS && M.row <= 4) {                           /* HDR rows (rows_build): mode, (real mode), SDR white, peak, expansion */
+        int *p = M.row == 0 ? &H.cfg.mode : M.row == 2 ? &H.cfg.sdr_white : M.row == 3 ? &H.cfg.peak : &H.cfg.expand;
+        if (M.row == 0) *p = (*p + delta + 4) % 4;
+        else if (M.row == 2) { int w = (int)hdr_sdr_white() + delta * 10; *p = w < 80 ? 0 : w > 500 ? 500 : w; }
+        else if (M.row == 3) { int w = (int)hdr_peak() + delta * 100; *p = w < 400 ? 0 : w > 10000 ? 10000 : w; }
+        else if (M.row == 4) { int w = *p + delta * 10; *p = w < 0 ? 0 : w > 100 ? 100 : w; }
+        if (M.row != 1) { hdr_persist(); menu_say("%s cambiado y guardado en graphics.ini.", g_rows[M.row].label); }
     } else if (M.cat == MC_TRUCOS && M.cheat) {
         if (M.row == 0) M.cheat[1] = !M.cheat[1];
         else if (M.row == 1) M.cheat[2] = !M.cheat[2];
