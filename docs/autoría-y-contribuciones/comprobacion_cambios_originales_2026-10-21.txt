@@ -1,0 +1,22 @@
+Ejecutado: 2026-10-21T20:20:00Z
+Estado comprobado: origin/main 3558192 2026-10-21T13:58:47-05:00 | origin/linux 0f4d0c1
+--- Identificadores propios (0 = no aparecen en el original, ni en main ni en linux):
+swapchain_stale        main=0 linux=0
+aout_of                main=0 linux=0
+AOut                   main=0 linux=0
+menu_vk                main=0 linux=0
+recomps_cheat          main=0 linux=0
+cheats_patch           main=0 linux=0
+menu_captures_input    main=0 linux=0
+--- nnaudio.c: diferencias entre v0.2.8 (e95cbeb, base de nuestro PR) y main actual:
+(ninguna: el archivo es idéntico)
+--- Regla de volumen por nombre del ejecutable, en main actual:
+origin/main:runtime/nnaudio.c:269:            /* Test copies are silent: only the copies a person plays (ssbu_native.exe, ssbu_user.exe) are audible,
+origin/main:runtime/nnaudio.c:275:            int percent = vol ? atoi(vol) : (!_stricmp(base, "ssbu_native.exe") || !_stricmp(base, "ssbu_user.exe") || !_stricmp(base, "game_native.exe")) ? 100 : 0; 
+--- Recreación de la swapchain ante VK_SUBOPTIMAL_KHR en main actual:
+origin/main:runtime/nvn_vk.c:494:    if (r == VK_ERROR_OUT_OF_DATE_KHR || r == VK_SUBOPTIMAL_KHR || suboptimal) { swapchain_destroy(); InterlockedIncrement64(&g_vk_recrea
+origin/main:runtime/nvn_vk_draw.c:3826:    if (r == VK_ERROR_OUT_OF_DATE_KHR || r == VK_SUBOPTIMAL_KHR || g_pend.suboptimal) g_pend.recreate = 1;
+origin/main:runtime/nvn_vk_draw.c:4080:        if (r == VK_ERROR_OUT_OF_DATE_KHR || r == VK_SUBOPTIMAL_KHR || suboptimal) { cmd_wait_all(); swapchain_destroy(); Interlock
+--- Commits del original posteriores a v0.2.8 que tocan audio, nvn_vk.c, display.c, nnhid.c, game_shim.c o setup.py:
+3558192 2026-10-21T13:58:47-05:00 v0.2.10: updates by unzipping over the old folder; settings and saves stay
+f180a00 2026-10-21T12:55:01-05:00 120 fps: pictures go out on a steady tick, as at 60
