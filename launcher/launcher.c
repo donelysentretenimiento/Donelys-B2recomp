@@ -248,6 +248,7 @@ static ULONGLONG g_play_t0;
 static int g_dpi = 96;
 #define S(x) MulDiv((x), g_dpi, 96)
 enum { ID_SET = 100, ID_SIZES = 200, ID_REMAP, ID_TEST, ID_SAVE, ID_PLAY, ID_CLOSE, ID_CONFIG, ID_STATUS, ID_KEYS, ID_MODS, ID_REPORT, ID_TIMER = 1 };
+#define ID_HDR 750
 static const int k_sizes[][2] = { {1280, 720}, {1600, 900}, {1920, 1080}, {2560, 1440}, {3840, 2160} };
 
 static int file_exists(const wchar_t *p) { return GetFileAttributesW(p) != INVALID_FILE_ATTRIBUTES; }
@@ -661,8 +662,11 @@ static void create_controls(void) {
     b = mk(L"BUTTON", L"Keyboard and mouse...", BS_PUSHBUTTON | WS_TABSTOP, lx, y, pw - 32, 30, ID_KEYS);
     tip(b, L"Rebind the keyboard and mouse (two keys or mouse buttons per action) and set the mouse camera. "
            L"Writes the [keyboard] section of controllers.ini.");
-    y += 44;
-    g_padnote = mk(L"STATIC", L"", SS_LEFT, lx, y, pw - 32, 64, -1);
+    y += 38;
+    b = mk(L"BUTTON", L"HDR y color avanzado...", BS_PUSHBUTTON | WS_TABSTOP, lx, y, pw - 32, 30, ID_HDR);
+    tip(b, L"HDR10 / scRGB: modo, blanco SDR, pico de luminancia y expansión de altas luces. Escribe las claves hdr* de graphics.ini.");
+    y += 40;
+    g_padnote = mk(L"STATIC", L"", SS_LEFT, lx, y, pw - 32, 46, -1);
     SendMessageW(g_padnote, WM_SETFONT, (WPARAM)g_smallfont, FALSE);
     /* bottom bar: status, small buttons, Play */
     int by = k_panel[0].bottom + 12, px = WIN_W - 14 - 150, bw = 76;   /* status: two lines beside five buttons */
@@ -925,6 +929,148 @@ static void keys_window(void) {
                              mr.left + (mr.right - mr.left - ww) / 2, mr.top + (mr.bottom - mr.top - wh) / 2, ww, wh, g_main, NULL, GetModuleHandleW(NULL), NULL);
     if (!w) return;
     {   BOOL on = TRUE; COLORREF text = RGB(200, 214, 240);  /* the main window's dark title bar */
+        DwmSetWindowAttribute(w, 20, &on, sizeof on);
+        DwmSetWindowAttribute(w, 35, &g_caption, sizeof g_caption);
+        DwmSetWindowAttribute(w, 36, &text, sizeof text); }
+    EnableWindow(g_main, FALSE);
+    ShowWindow(w, SW_SHOW);
+}
+
+/* ================================================================ HDR window
+ * "HDR y color avanzado..." in the controller panel: the hdr* keys of graphics.ini (read by runtime\gfx_options.c, drawn by
+ * runtime\hdr_vk.c). The game turns HDR on only when Windows has HDR on for the monitor and the surface offers the format; what it
+ * really did at the last start is the "hdr:" line of build\play\stdout.txt, shown at the bottom. */
+#define HW_W 600
+#define HW_H 360
+enum { ID_HMODE = 751, ID_HWHITE, ID_HPEAK, ID_HEXP, ID_HEXPV, ID_HRESET, ID_HSAVE, ID_HCANCEL, ID_HNOTE, ID_HREAL };
+static HWND g_hwin, g_hmode, g_hwhite, g_hpeak, g_hexp, g_hexpv, g_hnote, g_hreal;
+static const char *const k_hmode[4] = { "off", "auto", "hdr10", "scrgb" };
+static HWND hmk(const wchar_t *cls, const wchar_t *text, DWORD style, int x, int y, int w, int h, int id) {
+    HWND c = CreateWindowExW(0, cls, text, WS_CHILD | WS_VISIBLE | style, S(x), S(y), S(w), S(h), g_hwin, (HMENU)(INT_PTR)id, GetModuleHandleW(NULL), NULL);
+    SendMessageW(c, WM_SETFONT, (WPARAM)g_font, FALSE);
+    if (!wcscmp(cls, L"BUTTON") || !wcscmp(cls, TRACKBAR_CLASSW)) { if (p_AllowDarkModeForWindow) p_AllowDarkModeForWindow(c, TRUE); SetWindowTheme(c, L"DarkMode_Explorer", NULL); }
+    else if (!wcscmp(cls, L"COMBOBOX") || !wcscmp(cls, L"EDIT")) { if (p_AllowDarkModeForWindow) p_AllowDarkModeForWindow(c, TRUE); SetWindowTheme(c, L"DarkMode_CFD", NULL); }
+    return c;
+}
+static void hdr_expand_show(void) { wchar_t t[16]; swprintf(t, 16, L"%d %%", (int)SendMessageW(g_hexp, TBM_GETPOS, 0, 0)); SetWindowTextW(g_hexpv, t); }
+static void hdr_set_values(int mode, int white, int peak, int expand) {
+    SendMessageW(g_hmode, CB_SETCURSEL, mode, 0);
+    wchar_t t[16];
+    swprintf(t, 16, L"%d", white); SetWindowTextW(g_hwhite, t);
+    swprintf(t, 16, L"%d", peak); SetWindowTextW(g_hpeak, t);
+    SendMessageW(g_hexp, TBM_SETPOS, TRUE, expand); hdr_expand_show();
+}
+static void hdr_load(void) {
+    Ini f; char v[64];
+    memset(&f, 0, sizeof f);
+    ini_load(&f, g_ini[F_GFX]);
+    int mode = 0;
+    if (ini_get(&f, NULL, "hdr", 0, v, sizeof v)) for (int i = 0; i < 4; i++) if (!_stricmp(v, k_hmode[i])) mode = i;
+    int white = ini_get(&f, NULL, "hdr_sdr_white", 0, v, sizeof v) ? atoi(v) : 0;
+    int peak = ini_get(&f, NULL, "hdr_peak", 0, v, sizeof v) ? atoi(v) : 0;
+    int expand = ini_get(&f, NULL, "hdr_expand", 0, v, sizeof v) ? atoi(v) : 0;
+    ini_free(&f);
+    hdr_set_values(mode, white, peak, expand < 0 ? 0 : expand > 100 ? 100 : expand);
+}
+static void hdr_real_text(void) {                            /* the last "hdr:" line of the last game start */
+    char line[600], last[600] = "";
+    wchar_t path[MAX_PATH];
+    swprintf(path, MAX_PATH, L"%s\\play\\stdout.txt", g_buildd);
+    FILE *fp = _wfopen(path, L"rb");
+    while (fp && fgets(line, sizeof line, fp)) if (!strncmp(line, "hdr: ", 5) && !strstr(line, "SELFTEST")) { snprintf(last, sizeof last, "%s", line); }
+    if (fp) fclose(fp);
+    wchar_t w[700] = L"Último arranque: sin registro de HDR (SDR, o el juego aún no se ha ejecutado desde el launcher).";
+    if (last[0]) { last[strcspn(last, "\r\n")] = 0; swprintf(w, 700, L"Último arranque: %hs", last + 5); }
+    SetWindowTextW(g_hreal, w);
+}
+static int hdr_save(void) {
+    int mode = (int)SendMessageW(g_hmode, CB_GETCURSEL, 0, 0);
+    wchar_t t[16];
+    GetWindowTextW(g_hwhite, t, 16); int white = _wtoi(t);
+    GetWindowTextW(g_hpeak, t, 16); int peak = _wtoi(t);
+    int expand = (int)SendMessageW(g_hexp, TBM_GETPOS, 0, 0);
+    if (mode < 0) mode = 0;
+    if (white != 0 && (white < 80 || white > 500)) { SetWindowTextW(g_hnote, L"El blanco SDR debe ser 0 (el de Windows) o estar entre 80 y 500 nits."); return 0; }
+    if (peak != 0 && (peak < 400 || peak > 10000)) { SetWindowTextW(g_hnote, L"El pico debe ser 0 (el del monitor) o estar entre 400 y 10000 nits."); return 0; }
+    Ini f; char v[16];
+    memset(&f, 0, sizeof f);
+    ini_load(&f, g_ini[F_GFX]);
+    ini_set(&f, NULL, "hdr", 0, k_hmode[mode & 3]);
+    snprintf(v, sizeof v, "%d", white); ini_set(&f, NULL, "hdr_sdr_white", 0, v);
+    snprintf(v, sizeof v, "%d", peak); ini_set(&f, NULL, "hdr_peak", 0, v);
+    snprintf(v, sizeof v, "%d", expand); ini_set(&f, NULL, "hdr_expand", 0, v);
+    int ok = ini_save(&f, g_ini[F_GFX]);
+    ini_free(&f);
+    if (!ok) { SetWindowTextW(g_hnote, L"No se pudo escribir graphics.ini."); return 0; }
+    return 1;
+}
+static LRESULT CALLBACK hwndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
+    switch (m) {
+    case WM_CREATE: {
+        g_hwin = w;
+        hmk(L"STATIC", L"HDR Y COLOR AVANZADO", SS_LEFT, 20, 14, HW_W - 40, 20, -1);
+        hmk(L"STATIC", L"Modo", SS_LEFT, 20, 52, 170, 20, -1);
+        g_hmode = hmk(L"COMBOBOX", L"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, 200, 48, 250, 200, ID_HMODE);
+        static const wchar_t *const mt[4] = { L"HDR desactivado", L"HDR automático", L"HDR10", L"scRGB" };
+        for (int i = 0; i < 4; i++) SendMessageW(g_hmode, CB_ADDSTRING, 0, (LPARAM)mt[i]);
+        hmk(L"STATIC", L"Blanco SDR (nits)", SS_LEFT, 20, 90, 170, 20, -1);
+        g_hwhite = hmk(L"EDIT", L"", ES_NUMBER | ES_CENTER | WS_BORDER | WS_TABSTOP, 200, 86, 70, 23, ID_HWHITE);
+        hmk(L"STATIC", L"0 = el de Windows (80 a 500)", SS_LEFT, 280, 90, 300, 20, -1);
+        hmk(L"STATIC", L"Pico de luminancia (nits)", SS_LEFT, 20, 124, 170, 20, -1);
+        g_hpeak = hmk(L"EDIT", L"", ES_NUMBER | ES_CENTER | WS_BORDER | WS_TABSTOP, 200, 120, 70, 23, ID_HPEAK);
+        hmk(L"STATIC", L"0 = el del monitor (400 a 10000)", SS_LEFT, 280, 124, 300, 20, -1);
+        hmk(L"STATIC", L"Expansión de altas luces", SS_LEFT, 20, 158, 170, 20, -1);
+        g_hexp = hmk(TRACKBAR_CLASSW, L"", TBS_HORZ | TBS_AUTOTICKS | WS_TABSTOP, 196, 154, 290, 26, ID_HEXP);
+        SendMessageW(g_hexp, TBM_SETRANGE, TRUE, MAKELPARAM(0, 100)); SendMessageW(g_hexp, TBM_SETTICFREQ, 10, 0);
+        g_hexpv = hmk(L"STATIC", L"", SS_LEFT, 494, 158, 70, 20, ID_HEXPV);
+        g_hnote = hmk(L"STATIC", L"El HDR solo se activa si Windows tiene HDR activo en el monitor del juego. Es la imagen SDR del juego convertida correctamente; la expansión es opcional y 0 % la deja fiel al original. Los cambios valen al reiniciar el juego.", SS_LEFT, 20, 198, HW_W - 40, 64, ID_HNOTE);
+        SendMessageW(g_hnote, WM_SETFONT, (WPARAM)g_smallfont, FALSE);
+        g_hreal = hmk(L"STATIC", L"", SS_LEFT, 20, 268, HW_W - 40, 36, ID_HREAL);
+        SendMessageW(g_hreal, WM_SETFONT, (WPARAM)g_smallfont, FALSE);
+        hmk(L"BUTTON", L"Restaurar valores", BS_PUSHBUTTON | WS_TABSTOP, 20, 314, 150, 34, ID_HRESET);
+        hmk(L"BUTTON", L"Guardar", BS_PUSHBUTTON | WS_TABSTOP, 380, 314, 100, 34, ID_HSAVE);
+        hmk(L"BUTTON", L"Cancelar", BS_PUSHBUTTON | WS_TABSTOP, 490, 314, 90, 34, ID_HCANCEL);
+        hdr_load(); hdr_real_text();
+        return 0;
+    }
+    case WM_ERASEBKGND: { RECT r; GetClientRect(w, &r); FillRect((HDC)wp, &r, g_brpanel); return 1; }
+    case WM_CTLCOLORSTATIC: {
+        HDC dc = (HDC)wp;
+        SetTextColor(dc, (HWND)lp == g_hnote || (HWND)lp == g_hreal ? C_NOTE : (HWND)lp == g_hexpv ? C_VALUE : C_TEXT);
+        SetBkColor(dc, C_PANEL);
+        return (LRESULT)g_brpanel;
+    }
+    case WM_HSCROLL: if ((HWND)lp == g_hexp) hdr_expand_show(); return 0;
+    case WM_COMMAND: {
+        int id = LOWORD(wp);
+        if (id == ID_HRESET) { hdr_set_values(0, 0, 0, 0); SetWindowTextW(g_hnote, L"Valores predeterminados restaurados (HDR desactivado): Guardar los conserva."); }
+        else if (id == ID_HSAVE) { if (hdr_save()) DestroyWindow(w); }
+        else if (id == ID_HCANCEL || id == IDCANCEL) DestroyWindow(w);
+        return 0;
+    }
+    case WM_CLOSE: DestroyWindow(w); return 0;
+    case WM_DESTROY: g_hwin = NULL; EnableWindow(g_main, TRUE); SetForegroundWindow(g_main); return 0;
+    }
+    return DefWindowProcW(w, m, wp, lp);
+}
+static void hdr_window(void) {
+    if (g_hwin) { SetForegroundWindow(g_hwin); return; }
+    static int reg;
+    if (!reg) {
+        WNDCLASSEXW wc = { sizeof wc };
+        wc.lpfnWndProc = hwndproc; wc.hInstance = GetModuleHandleW(NULL); wc.lpszClassName = L"B2recompHdr";
+        wc.hCursor = LoadCursorW(NULL, IDC_ARROW); wc.hbrBackground = g_brpanel;
+        reg = RegisterClassExW(&wc) != 0;
+    }
+    DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_CLIPCHILDREN;
+    RECT r = { 0, 0, S(HW_W), S(HW_H) };
+    AdjustWindowRectEx(&r, style, FALSE, WS_EX_CONTROLPARENT | WS_EX_DLGMODALFRAME);
+    RECT mr; GetWindowRect(g_main, &mr);
+    int ww = r.right - r.left, wh = r.bottom - r.top;
+    HWND w = CreateWindowExW(WS_EX_CONTROLPARENT | WS_EX_DLGMODALFRAME, L"B2recompHdr", L"HDR y color avanzado", style,
+                             mr.left + (mr.right - mr.left - ww) / 2, mr.top + (mr.bottom - mr.top - wh) / 2, ww, wh, g_main, NULL, GetModuleHandleW(NULL), NULL);
+    if (!w) return;
+    {   BOOL on = TRUE; COLORREF text = RGB(200, 214, 240);
         DwmSetWindowAttribute(w, 20, &on, sizeof on);
         DwmSetWindowAttribute(w, 35, &g_caption, sizeof g_caption);
         DwmSetWindowAttribute(w, 36, &text, sizeof text); }
@@ -1975,6 +2121,7 @@ static LRESULT CALLBACK wndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
         else if (id == ID_REMAP) run_tool(L"--pad-map 1", L"Remap controller (player 1)");
         else if (id == ID_TEST) run_tool(L"--pad-test", L"Test controller");
         else if (id == ID_KEYS) keys_window();
+        else if (id == ID_HDR) hdr_window();
         else if (id == ID_MODS) mods_window();
         else if (id == ID_REPORT) make_report(w);
         else if (id == ID_SAVE) save_all();
