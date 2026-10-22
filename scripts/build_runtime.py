@@ -82,7 +82,7 @@ def link_dll():
         f.writelines('"%s"\n' % o.replace('\\', '/') for o in objs)
     t = time.time()
     code, out = run([CLANG, '-shared', '-O1', '-w', '-mcx16', '-I', RT, os.path.join(RT, 'game_shim.c'), '@' + rsp, '-o', DLL] +
-                    (['-Wl,--out-implib,' + IMPLIB(DLL)] if MINGW else []))
+                    (['-Xlinker', '--out-implib=' + IMPLIB(DLL)] if MINGW else []))
     print('game.dll: exit %d in %.0fs, %d objects' % (code, time.time() - t, len(objs)))
     if code:
         print(out[-4000:])
@@ -130,7 +130,7 @@ def main():
         if not run([toolchain.LLVM_RC, '/fo', rs, rc])[0]:
             res = [rs] if MINGW else ['-Wl,' + rs]           # lld in mingw mode takes the .res as an ordinary input
     # fixed base 0x140000000 + PDB for crash symbolising
-    debug = ['-g', '-Wl,--pdb=' + EXE[:-4] + '.pdb', '-Wl,--disable-dynamicbase'] if MINGW else ['-g', '-Wl,/DEBUG', '-Wl,/DYNAMICBASE:NO']
+    debug = ['-g', '-Xlinker', '--pdb=' + EXE[:-4] + '.pdb', '-Wl,--disable-dynamicbase'] if MINGW else ['-g', '-Wl,/DEBUG', '-Wl,/DYNAMICBASE:NO']
     code, out = run([CLANG] + objs + [IMPLIB(DLL), os.path.join(SDL3, 'lib', 'x64', 'SDL3.lib')] + LIBS + res + debug + ['-o', EXE])
     print('game_native.exe: link exit %d' % code)
     if code:
