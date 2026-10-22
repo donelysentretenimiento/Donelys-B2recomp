@@ -17,8 +17,9 @@ Actualizado: 2026-10-22. Rama de trabajo: `donelys-hdr-repair`, creada desde `or
 ## Siguiente bloque
 
 1. Añadir una captura numérica controlada de fotogramas reales para complementar los patrones conocidos de SDR→scRGB y SDR→HDR10, sin pedir valoración visual.
-2. Auditar los commits de v0.2.9/v0.2.10 y portar de forma selectiva actualización y temporización, manteniendo separados los cambios HDR.
-3. Continuar por audio/cinemáticas, AMD/Intel, entrada, reubicación, ultrawide y 120 FPS según la matriz técnica.
+2. Portar la actualización v0.2.10 y los cambios de 120 FPS en ramas separadas según `docs/tecnico/AUDITORIA_UPSTREAM_0.2.9_0.2.10.md`.
+3. Preparar una ruta automatizada larga para audio/cinemáticas; la ruta corta ya confirmó salida continua sin underruns.
+4. Continuar por AMD/Intel, entrada, reubicación y ultrawide según la matriz técnica.
 
 ## Límites conocidos
 
