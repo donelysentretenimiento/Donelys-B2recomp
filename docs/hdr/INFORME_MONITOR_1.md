@@ -12,7 +12,15 @@ Actualizado: 2026-10-22. Este documento separa la configuración objetivo comuni
 
 ## Lectura automática del 2026-10-22
 
-La sonda `tests/hdr_probe.c`, ejecutada sobre la ventana de escritorio, devolvió:
+La sonda ampliada enumeró las tres pantallas activas y confirmó el objetivo:
+
+| Dispositivo | Nombre | HDR | Señal | Modo | Pico |
+|---|---|---:|---|---|---:|
+| `\\.\DISPLAY1` | GIGABYTE GS27Q | activo | RGB, 10 bits | 2560 × 1440 a 165,000 Hz | 329 nits |
+| `\\.\DISPLAY2` | ASUS VG289Q1A | desactivado | RGB, 8 bits | 3840 × 2160 a 60,000 Hz | 240 nits |
+| `\\.\DISPLAY3` | ARZOPA | desactivado | RGB, 8 bits | 2560 × 1440 a 60,000 Hz | 418 nits |
+
+La primera versión de la sonda, ejecutada sólo sobre la ventana de escritorio, había devuelto:
 
 | Campo | Valor observado |
 |---|---:|
@@ -25,7 +33,7 @@ La sonda `tests/hdr_probe.c`, ejecutada sobre la ventana de escritorio, devolvi�
 | Luminancia máxima / fotograma completo | 240 / 240 nits |
 | Blanco SDR de Windows | 80 nits |
 
-Esta lectura corresponde al ASUS, no al Gigabyte objetivo. El inventario gráfico informa además un modo activo de 2560 × 1440 a 164 Hz, coherente con el GS27Q indicado, pero no se asigna aquí a un `DISPLAYn` por conjetura. Cuando la ventana del juego esté en el Gigabyte, el runtime registrará su nombre y ruta EDID reales. Una lectura de capacidades en estado SDR tampoco debe reutilizarse como si fuera la medición HDR activa.
+Esa lectura correspondía al ASUS, no al Gigabyte objetivo. La enumeración explícita elimina ya la ambigüedad: el GS27Q es `DISPLAY1`. Una lectura de capacidades en estado SDR no se reutiliza como si fuera la medición HDR activa.
 
 ## Comportamiento corregido
 
@@ -35,6 +43,13 @@ Esta lectura corresponde al ASUS, no al Gigabyte objetivo. El inventario gráfic
 - Se registran nombre descriptivo, identidad EDID, espacio de color, profundidad, codificación, resolución y frecuencia del monitor que contiene la ventana.
 - Cambiar de monitor, modo, HDR, espacio de color o profundidad recrea la swapchain. Cambiar sólo el control de blanco actualiza niveles; cambiar luminancia o primarias actualiza metadatos sin recreaciones innecesarias.
 
-## Validación pendiente automatizable
+## Validación integrada automatizada
 
-En una ejecución con HDR de Windows activo, `hdr_probe.exe` y la línea `hdr: ACTIVE` deben registrar el dispositivo real, `hdr_on=1`, 10 bits y el pico que entregue el controlador (aproximadamente 329 nits en la pantalla indicada). No se solicita una comparación visual al usuario: la aceptación se basa en registros, formatos Vulkan, autopruebas numéricas y resultados de presentación.
+Se ejecutó la ruta real del juego sobre `DISPLAY1`, con configuración y partidas aisladas:
+
+| Ruta | Swapchain | Autoprueba GPU | Presentación |
+|---|---|---|---|
+| HDR10 | formato 64, `HDR10_ST2084`, PQ/Rec.2020 | 12 píxeles × 2 expansiones, error máximo 0,000499 | 508 fotogramas, 0 descartados, 0 fallos Vulkan |
+| scRGB | formato 97, `EXTENDED_SRGB_LINEAR`, FP16 | 12 píxeles × 2 expansiones, error máximo 0,001406 | 1141 fotogramas, 0 descartados, 0 fallos Vulkan |
+
+Ambas rutas resolvieron blanco SDR 240 nits y pico 329 nits, detectaron el GS27Q a 10 bits/165 Hz y recrearon la swapchain una sola vez, la transición esperada desde la swapchain inicial SDR. HDR10 envió metadatos; scRGB no los envía por diseño. La capa `VK_LAYER_KHRONOS_validation` no está instalada, por lo que los contadores de validación permanecen inactivos; los resultados anteriores proceden de llamadas Vulkan, lectura GPU y presentación reales.

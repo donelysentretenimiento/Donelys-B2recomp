@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Actualizado el 2026-10-22. Trabajo HDR aislado en `donelys-hdr-repair`, basado en `origin/hdr-nativo` (`f5d03e5`). Entorno: Windows 11 y RTX 5090; la sonda actual vio `DISPLAY2` a 4K60 con HDR desactivado. Juego versión 1.2.
+Actualizado el 2026-10-22. Trabajo HDR aislado en `donelys-hdr-repair`, basado en `origin/hdr-nativo` (`f5d03e5`). Entorno: Windows 11, RTX 5090 y GIGABYTE GS27Q (`DISPLAY1`) a 2560×1440/165 Hz, RGB 10 bits, HDR activo y pico 329 nits. Juego versión 1.2.
 
 Leyenda: ✅ probado con evidencia · 🟡 implementado, probado en parte · 🧪 experimental · ⏳ pendiente · ❌ sin probar
 
@@ -66,6 +66,6 @@ Existe una ruta HDR10/scRGB con conversión SDR→HDR, selección de formato de 
 - **Metadatos:** `VK_EXT_hdr_metadata` informa capacidades de pantalla; MaxCLL/MaxFALL quedan en 0 porque el contenido convertido no tiene mediciones de masterización.
 - **Menú:** `runtime/menu_vk.c` se dibuja después de la copia, sobre el fotograma; con HDR deberá usar el mismo espacio de color.
 - **Ajustes:** añadir las opciones a `config/graphics.ini` y a `runtime/gfx_options.c`.
-- **Prueba:** 47 comprobaciones unitarias pasan; falta una ejecución integrada con HDR de Windows activo y medición automática de la salida.
+- **Prueba:** 48 comprobaciones unitarias pasan. Ejecución integrada correcta en HDR10 y scRGB sobre el GS27Q: autopruebas GPU correctas, 1649 fotogramas totales, ninguno descartado y cero fallos Vulkan.
 
 Detalles y próximos pasos: `docs/hdr/INFORME_MONITOR_1.md`, `docs/hdr/CONTINUIDAD_HDR.md` y `docs/tecnico/MATRIZ_ERRORES_B2RECOMP.md`.
