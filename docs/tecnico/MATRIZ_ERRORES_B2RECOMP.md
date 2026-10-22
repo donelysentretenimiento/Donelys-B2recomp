@@ -1,0 +1,26 @@
+# Matriz técnica de errores de B2recomp
+
+Actualizado: 2026-10-22. Leyenda: **corregido** = cambio implementado y prueba automática; **parcial** = evidencia técnica disponible, falta una ejecución integrada; **pendiente** = aún no modificado.
+
+| Prioridad | Área | Síntoma / riesgo | Causa comprobada | Estado y evidencia |
+|---:|---|---|---|---|
+| P0 | HDR, launcher | Un pico válido de 329 nits era rechazado | Límite inferior fijo de 400 nits en launcher y parser | **Corregido**. Prueba literal de 329 nits y compilación del launcher |
+| P0 | HDR, runtime | Un pico manual menor de 400 terminaba usando monitor o 1000 nits | `hdr_peak()` exigía `>= 400` | **Corregido**. Resolución única de niveles, 41 pruebas de color/política |
+| P0 | Metadatos HDR10 | MaxCLL y MaxFALL contenían el blanco SDR | Se confundían capacidades de pantalla y datos del contenido | **Corregido**. Luminancia de pantalla separada; contenido desconocido se envía como 0 |
+| P0 | Cambio de monitor | Sólo el booleano HDR provocaba recreación | No se comparaban identidad, modo, color o profundidad | **Corregido**. 6 pruebas de clasificación; luminancia sola no recrea |
+| P0 | Vulkan | Una superficie RGBA podía recibir una vista BGRA incompatible | Vista intermedia fijada a `B8G8R8A8_UNORM` | **Corregido**. La vista conserva el formato elegido por la superficie; `nvn_vk.c` compila |
+| P0 | Imagen oscura/apagada | Issue K0NL/B2recomp #15: Vulkan oscuro y desaturado, OpenGL correcto | El issue sigue abierto; no ofrece mediciones. En esta rama había metadatos incorrectos y límites inconsistentes, ambos capaces de alterar la presentación HDR | **Parcial avanzado**. HDR10 y scRGB pasan en el GS27Q con lectura GPU y presentación reales; falta una captura numérica de un fotograma completo para atribuir el síntoma original |
+| P1 | Compilación aislada | El worktree limpio no contiene `runtime/gen` ni dependencias ignoradas | Son artefactos locales deliberadamente no versionados | **Corregido para verificación local**. Reutilizando los generados ignorados: launcher correcto, 45/45 unidades host y enlace de `game_native.exe` correctos |
+| P1 | Actualización upstream | v0.2.9 mejora 120 FPS; v0.2.10 añade actualización incremental | La rama HDR parte de un estado anterior y no debe fusionar todo sin auditoría | **Auditado**. Clasificación commit a commit en `AUDITORIA_UPSTREAM_0.2.9_0.2.10.md`; portar en ramas separadas |
+| P1 | Audio | Posibles desfases, silencios o estados duplicados | Upstream mantiene un único estado; esta edición ya separa cada `AudioOut` | **Parcial probado**. Ruta real: 516 buffers, 0 rechazados, 0 underruns y 0 appends con el dispositivo vacío |
+| P1 | Cinemáticas | Audio CRI y vídeo deben conservar velocidad y sincronía | Necesita una ruta automatizada que alcance una cinemática completa | **Pendiente de ruta larga**; proteger la implementación multi-`AudioOut` |
+| P1 | AMD Vulkan | Diferencias de extensiones, formatos y sincronización | La iGPU AMD no ofrece mailbox ni formatos HDR para la superficie del GS27Q, conectado a la RTX | **Parcial probado**. SDR: 120 fotogramas, 60,00 FPS, 0 tardíos/descartados/fallos. HDR solicitado: degradación segura a SDR, 666 fotogramas y 0 fallos |
+| P1 | Intel Vulkan | Diferencias de extensiones y formatos | No hay una GPU Intel disponible en este equipo | **Pendiente en hardware Intel**; no se declara compatibilidad sin evidencia |
+| P2 | Mandos / entrada | Combinaciones y hotplug sin matriz completa | Cobertura insuficiente | **Pendiente** |
+| P2 | Reubicación / actualización | Rutas absolutas o actualización pueden perder estado | Debe verificarse sobre copia temporal | **Pendiente** |
+| P2 | Ultrawide / 120 FPS | Temporización y relación de aspecto experimentales | v0.2.9 contiene cambios relevantes, aún no portados | **Pendiente selectivo** |
+
+## Fuentes de comparación
+
+- Issue upstream [#15, “Low Brightness and Muted Colors on HDR Display”](https://github.com/K0NL/B2recomp/issues/15), abierto el 2026-10-19 y todavía sin diagnóstico técnico concluyente al revisar el 2026-10-22.
+- Releases upstream [v0.2.9](https://github.com/K0NL/B2recomp/releases/tag/v0.2.9) y [v0.2.10](https://github.com/K0NL/B2recomp/releases/tag/v0.2.10). La primera cambia temporización/renderizado a más de 60 FPS; la segunda cambia el flujo de actualización y declara el código de juego igual al de v0.2.9.

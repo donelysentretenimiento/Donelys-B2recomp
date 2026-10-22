@@ -32,8 +32,9 @@ static struct {
 static VkShaderModule menu_shader(int stage, const char *src);
 static void hdr_selftest(void);
 
-static float hdr_sdr_white(void) { return H.cfg.sdr_white >= 80 ? (float)H.cfg.sdr_white : H.win.sdr_white_nits >= 80 ? H.win.sdr_white_nits : 203.0f; }
-static float hdr_peak(void) { return H.cfg.peak >= 400 ? (float)H.cfg.peak : H.win.max_nits >= 100 ? H.win.max_nits : 1000.0f; }
+static HdrLevels hdr_levels(void) { return hdr_resolve_levels((float)H.cfg.sdr_white, (float)H.cfg.peak, H.win.sdr_white_nits, H.win.max_nits); }
+static float hdr_sdr_white(void) { return hdr_levels().sdr_white_nits; }
+static float hdr_peak(void) { return hdr_levels().peak_nits; }
 static void hdr_cfg_init(void) {
     static int done;
     if (done) return;
@@ -182,7 +183,9 @@ static void hdr_set_metadata(void) {
     VkHdrMetadataEXT md = {VK_STRUCTURE_TYPE_HDR_METADATA_EXT};
     md.displayPrimaryRed.x = H.win.prim[0]; md.displayPrimaryRed.y = H.win.prim[1]; md.displayPrimaryGreen.x = H.win.prim[2]; md.displayPrimaryGreen.y = H.win.prim[3];
     md.displayPrimaryBlue.x = H.win.prim[4]; md.displayPrimaryBlue.y = H.win.prim[5]; md.whitePoint.x = H.win.prim[6]; md.whitePoint.y = H.win.prim[7];
-    md.maxLuminance = hdr_peak(); md.minLuminance = H.win.min_nits; md.maxContentLightLevel = hdr_sdr_white(); md.maxFrameAverageLightLevel = hdr_sdr_white();
+    HdrMetadataValues values = hdr_metadata_values(H.win.max_nits, H.win.min_nits);
+    md.maxLuminance = values.max_luminance; md.minLuminance = values.min_luminance;
+    md.maxContentLightLevel = values.max_cll; md.maxFrameAverageLightLevel = values.max_fall;
     H.set_md(V.device, 1, &V.swapchain, &md);
 }
 /* swapchain_create, after its images exist. Returns 0 when the HDR path cannot be set up: the caller then makes an SDR swapchain. */
@@ -200,7 +203,9 @@ static int hdr_swapchain_made(void) {
         H.mem[i] = vmem_alloc(rq, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 0);
         if (vkBindImageMemory(V.device, H.img[i], H.mem[i].mem, H.mem[i].off) != VK_SUCCESS) { hdr_images_free(); return 0; }
         VkImageViewCreateInfo vc = {VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO};
-        vc.image = H.img[i]; vc.viewType = VK_IMAGE_VIEW_TYPE_2D; vc.format = VK_FORMAT_B8G8R8A8_UNORM; vc.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; vc.subresourceRange.levelCount = 1; vc.subresourceRange.layerCount = 1;
+        /* The SDR compositor may select BGRA or RGBA. A BGRA view of an RGBA image is not
+         * format-compatible even with MUTABLE_FORMAT, so preserve the selected channel order. */
+        vc.image = H.img[i]; vc.viewType = VK_IMAGE_VIEW_TYPE_2D; vc.format = V.format.format; vc.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; vc.subresourceRange.levelCount = 1; vc.subresourceRange.layerCount = 1;
         if (vkCreateImageView(V.device, &vc, NULL, &H.view[i]) != VK_SUCCESS) { hdr_images_free(); return 0; }
         VkDescriptorImageInfo ii = {H.smp, H.view[i], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
         VkWriteDescriptorSet wd = {VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET}; wd.dstSet = H.ds[i]; wd.descriptorCount = 1; wd.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER; wd.pImageInfo = &ii;
@@ -212,8 +217,10 @@ static int hdr_swapchain_made(void) {
     hdr_set_metadata();
     { static int st; if (!st && getenv("SSBU_HDR_SELFTEST")) { st = 1; hdr_selftest(); hdr_persist(); } }      /* TEST: the selftest also writes the settings back (point SSBU_GRAPHICS_CONFIG at a copy) */
     snprintf(H.shown, sizeof H.shown, "%s", H.mode == HDR_HDR10 ? "HDR10 · PQ · Rec.2020 · 10 bits" : "scRGB · lineal · FP16");
-    printf("hdr: ACTIVE %s (swapchain format %d, colour space %d); SDR white %.0f nits, peak %.0f nits, expansion %d %%; monitor %s max %.0f nits; metadata %s\n", H.shown, (int)H.sc.format, (int)H.sc.colorSpace,
-           hdr_sdr_white(), hdr_peak(), H.cfg.expand, H.win.device, H.win.max_nits, H.set_md && H.mode == HDR_HDR10 ? "sent" : "not sent");
+    printf("hdr: ACTIVE %s (swapchain format %d, colour space %d); SDR white %.0f nits, peak %.0f nits, expansion %d %%; monitor %s (%s) max %.0f nits, %d-bit, %ux%u@%.3f; metadata %s\n", H.shown, (int)H.sc.format, (int)H.sc.colorSpace,
+           hdr_sdr_white(), hdr_peak(), H.cfg.expand, H.win.device, H.win.friendly_name, H.win.max_nits, H.win.bits_per_color,
+           H.win.width, H.win.height, H.win.refresh_den ? (double)H.win.refresh_num / H.win.refresh_den : 0.0,
+           H.set_md && H.mode == HDR_HDR10 ? "sent" : "not sent");
     fflush(stdout);
     return 1;
 }
@@ -229,9 +236,11 @@ static int hdr_poll(void) {
     if (H.cfg.mode == 0 || H.disabled || ++H.frames % 120) return 0;  /* Windows is asked every 2 s at 60 fps */
     HdrWinInfo w; hdr_win_query(V.hwnd, &w);
     if (!w.ok) return 0;
-    H.win.sdr_white_nits = w.sdr_white_nits;                          /* the slider in Windows' settings: followed live */
-    if (w.max_nits > 0) { H.win.max_nits = w.max_nits; H.win.min_nits = w.min_nits; }      /* the window moved to another monitor: its peak (used by the expansion) */
-    return (w.hdr_on != 0) != (H.win_on_at_make != 0);
+    int changes = hdr_win_changes(&H.win, &w);
+    H.win = w;
+    if (changes & HDR_WIN_CHANGE_REMAKE) return 1;
+    if (changes & HDR_WIN_CHANGE_METADATA) hdr_set_metadata();
+    return 0;
 }
 
 #include "hdr_selftest.inc"

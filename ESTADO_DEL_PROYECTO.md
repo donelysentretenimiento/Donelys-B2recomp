@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Actualizado el 2026-10-21. Base: B2recomp v0.2.7 (`b3a6dc6`). Entorno de pruebas: Windows 11, RTX 5090, monitor 4K a 60 Hz, juego versión 1.2.
+Actualizado el 2026-10-22. Trabajo HDR aislado en `donelys-hdr-repair`, basado en `origin/hdr-nativo` (`f5d03e5`). Entorno: Windows 11, RTX 5090 y GIGABYTE GS27Q (`DISPLAY1`) a 2560×1440/165 Hz, RGB 10 bits, HDR activo y pico 329 nits. Juego versión 1.2.
 
 Leyenda: ✅ probado con evidencia · 🟡 implementado, probado en parte · 🧪 experimental · ⏳ pendiente · ❌ sin probar
 
@@ -51,21 +51,21 @@ El usuario indicó que los trucos funcionaron, sin detallar cuáles.
 
 ## Pendiente
 
-1. **HDR nativo**, la siguiente tarea (ver abajo).
+1. **Validación integrada del HDR nativo**, ya implementado y en reparación (ver `docs/hdr/CONTINUIDAD_HDR.md`).
 2. Probar ratón, mando y cambio de ventana en el menú.
 3. Probar el resto de trucos y los mods de combate.
 4. Reproducir el fallo de `SUBOPTIMAL` con overlay para confirmar la reparación.
-5. Decidir si se rebasa sobre versiones nuevas del proyecto base (la v0.2.10 ya existe).
+5. Portar selectivamente los cambios útiles de v0.2.9/v0.2.10, sin una fusión indiscriminada.
 
-## Cómo continuar con HDR
+## Estado de HDR
 
-No hay nada de HDR implementado en esta edición. Puntos de partida en el código:
+Existe una ruta HDR10/scRGB con conversión SDR→HDR, selección de formato de superficie y metadatos. En esta fase se repararon el pico de 329 nits, MaxCLL/MaxFALL, el seguimiento del monitor y la compatibilidad RGBA/BGRA. Puntos principales:
 
 - **Formato de la swapchain:** `runtime/nvn_vk.c`, búsqueda del formato de superficie (`B8G8R8A8_UNORM` + `SRGB_NONLINEAR`). Un HDR nativo necesita pedir `VK_EXT_swapchain_colorspace` en la instancia y elegir un formato HDR (por ejemplo `R16G16B16A16_SFLOAT` con `EXTENDED_SRGB_LINEAR`, o `A2B10G10R10` con `HDR10_ST2084`).
 - **Presentación:** `runtime/nvn_vk_draw.c`, función `vk_present2`: aquí se copia la imagen del juego a la swapchain con `vkCmdBlitImage`. Con HDR habrá que sustituir la copia por un paso de dibujo que convierta de SDR a HDR (referencia de blanco, curva de transferencia).
-- **Metadatos:** `VK_EXT_hdr_metadata` para informar de luminancia máxima y de blanco de referencia.
+- **Metadatos:** `VK_EXT_hdr_metadata` informa capacidades de pantalla; MaxCLL/MaxFALL quedan en 0 porque el contenido convertido no tiene mediciones de masterización.
 - **Menú:** `runtime/menu_vk.c` se dibuja después de la copia, sobre el fotograma; con HDR deberá usar el mismo espacio de color.
 - **Ajustes:** añadir las opciones a `config/graphics.ini` y a `runtime/gfx_options.c`.
-- **Prueba:** monitor con HDR de Windows activado; comparar con la captura de la ventana (`SSBU_SHOT_*`). Las capturas del juego no reflejan el HDR, hay que medir con un analizador o por registro.
+- **Prueba:** 48 comprobaciones unitarias pasan. Ejecución integrada correcta en HDR10 y scRGB sobre el GS27Q: autopruebas GPU correctas, 1649 fotogramas totales, ninguno descartado y cero fallos Vulkan.
 
-El autor del proyecto base indica que su HDR está en desarrollo; conviene comprobar su estado antes de empezar.
+Detalles y próximos pasos: `docs/hdr/INFORME_MONITOR_1.md`, `docs/hdr/CONTINUIDAD_HDR.md` y `docs/tecnico/MATRIZ_ERRORES_B2RECOMP.md`.

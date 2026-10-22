@@ -143,7 +143,7 @@ static const char *const k_default_ini =
 "hdr = off\r\n"
 "; hdr_sdr_white = 0 | 80 .. 500   nits of SDR white; 0 = the value of Windows' SDR content brightness slider\r\n"
 "hdr_sdr_white = 0\r\n"
-"; hdr_peak = 0 | 400 .. 10000   nits the highlight expansion may reach; 0 = the monitor's peak\r\n"
+"; hdr_peak = 0 | 80 .. 10000   nits the highlight expansion may reach; 0 = the monitor's peak\r\n"
 "hdr_peak = 0\r\n"
 "; hdr_expand = 0 .. 100   optional highlight expansion (0 = off)\r\n"
 "hdr_expand = 0\r\n";
@@ -219,7 +219,7 @@ static BOOL CALLBACK opt_load(PINIT_ONCE once, PVOID arg, PVOID *ctx) {
         else if (!_stricmp(key, "monitor")) { if (_stricmp(val, "auto")) snprintf(o->monitor, sizeof o->monitor, "%s", val); }
         else if (!_stricmp(key, "hdr")) o->hdr_mode = !_stricmp(val, "auto") ? 1 : !_stricmp(val, "hdr10") ? 2 : !_stricmp(val, "scrgb") ? 3 : 0;
         else if (!_stricmp(key, "hdr_sdr_white")) { int v = atoi(val); o->hdr_sdr_white = v >= 80 && v <= 500 ? v : 0; }
-        else if (!_stricmp(key, "hdr_peak")) { int v = atoi(val); o->hdr_peak = v >= 400 && v <= 10000 ? v : 0; }
+        else if (!_stricmp(key, "hdr_peak")) { int v = atoi(val); o->hdr_peak = v >= 80 && v <= 10000 ? v : 0; }
         else if (!_stricmp(key, "hdr_expand")) { int v = atoi(val); o->hdr_expand = v < 0 ? 0 : v > 100 ? 100 : v; }
         else unknown++;
     }

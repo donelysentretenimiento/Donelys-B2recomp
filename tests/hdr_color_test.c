@@ -4,6 +4,17 @@
 static int fails, n;
 static void near_(const char *what, float got, float want, float tol) { n++; if (fabsf(got - want) > tol) { fails++; printf("FAIL %s: %.6f, expected %.6f (+-%g)\n", what, got, want, tol); } }
 int main(void) {
+    HdrLevels levels = hdr_resolve_levels(203.0f, 329.0f, 240.0f, 344.0f);
+    near_("configured peak accepts 329-nit display", levels.peak_nits, 329.0f, 1e-6f);
+    near_("white never exceeds configured peak", levels.sdr_white_nits, 203.0f, 1e-6f);
+    levels = hdr_resolve_levels(340.0f, 329.0f, 240.0f, 344.0f);
+    near_("white is clamped to physical peak", levels.sdr_white_nits, 329.0f, 1e-6f);
+    levels = hdr_resolve_levels(0.0f, 0.0f, 240.0f, 329.0f);
+    near_("automatic peak uses Windows 329-nit report", levels.peak_nits, 329.0f, 1e-6f);
+    HdrMetadataValues metadata = hdr_metadata_values(329.0f, 0.01f);
+    near_("metadata display peak", metadata.max_luminance, 329.0f, 1e-6f);
+    near_("unknown content MaxCLL is zero", metadata.max_cll, 0.0f, 1e-6f);
+    near_("unknown content MaxFALL is zero", metadata.max_fall, 0.0f, 1e-6f);
     near_("srgb 0", hdr_srgb_to_linear(0), 0, 1e-7f);
     near_("srgb 1", hdr_srgb_to_linear(1), 1, 1e-6f);
     near_("srgb 0.5", hdr_srgb_to_linear(0.5f), 0.214041f, 1e-5f);
