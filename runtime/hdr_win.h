@@ -31,4 +31,5 @@ static inline int hdr_win_changes(const HdrWinInfo *a, const HdrWinInfo *b) {
     return c;
 }
 int hdr_win_query(HWND hwnd, HdrWinInfo *o);      /* any thread; returns o->ok */
+int hdr_win_query_monitor(HMONITOR monitor, HdrWinInfo *o); /* probes an explicit monitor; used by diagnostics */
 #endif

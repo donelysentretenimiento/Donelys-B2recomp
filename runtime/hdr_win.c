@@ -45,14 +45,13 @@ static void hw_displayconfig(const char *gdi, HdrWinInfo *o) {
     free(p); free(m);
 }
 
-int hdr_win_query(HWND hwnd, HdrWinInfo *o) {
+int hdr_win_query_monitor(HMONITOR mon, HdrWinInfo *o) {
     memset(o, 0, sizeof *o);
     o->adv_supported = o->adv_enabled = -1;
     HMODULE dx = LoadLibraryA("dxgi.dll");
     HRESULT (WINAPI *create)(REFIID, void **) = dx ? (void *)GetProcAddress(dx, "CreateDXGIFactory1") : NULL;
     IDXGIFactory1 *fac = NULL;
     if (!create || FAILED(create(&IID_IDXGIFactory1, (void **)&fac))) return 0;
-    HMONITOR mon = MonitorFromWindow(hwnd ? hwnd : GetDesktopWindow(), MONITOR_DEFAULTTOPRIMARY);
     IDXGIAdapter1 *ad;
     for (UINT a = 0; !o->ok && SUCCEEDED(IDXGIFactory1_EnumAdapters1(fac, a, &ad)); a++) {
         IDXGIOutput *out;
@@ -85,4 +84,8 @@ int hdr_win_query(HWND hwnd, HdrWinInfo *o) {
         hw_displayconfig(o->device, o);
     }
     return o->ok;
+}
+
+int hdr_win_query(HWND hwnd, HdrWinInfo *o) {
+    return hdr_win_query_monitor(MonitorFromWindow(hwnd ? hwnd : GetDesktopWindow(), MONITOR_DEFAULTTOPRIMARY), o);
 }
