@@ -991,7 +991,7 @@ static int hdr_save(void) {
     int expand = (int)SendMessageW(g_hexp, TBM_GETPOS, 0, 0);
     if (mode < 0) mode = 0;
     if (white != 0 && (white < 80 || white > 500)) { SetWindowTextW(g_hnote, L"El blanco SDR debe ser 0 (el de Windows) o estar entre 80 y 500 nits."); return 0; }
-    if (peak != 0 && (peak < 400 || peak > 10000)) { SetWindowTextW(g_hnote, L"El pico debe ser 0 (el del monitor) o estar entre 400 y 10000 nits."); return 0; }
+    if (peak != 0 && (peak < 80 || peak > 10000)) { SetWindowTextW(g_hnote, L"El pico debe ser 0 (el del monitor) o estar entre 80 y 10000 nits."); return 0; }
     Ini f; char v[16];
     memset(&f, 0, sizeof f);
     ini_load(&f, g_ini[F_GFX]);
@@ -1018,7 +1018,7 @@ static LRESULT CALLBACK hwndproc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
         hmk(L"STATIC", L"0 = el de Windows (80 a 500)", SS_LEFT, 280, 90, 300, 20, -1);
         hmk(L"STATIC", L"Pico de luminancia (nits)", SS_LEFT, 20, 124, 170, 20, -1);
         g_hpeak = hmk(L"EDIT", L"", ES_NUMBER | ES_CENTER | WS_BORDER | WS_TABSTOP, 200, 120, 70, 23, ID_HPEAK);
-        hmk(L"STATIC", L"0 = el del monitor (400 a 10000)", SS_LEFT, 280, 124, 300, 20, -1);
+        hmk(L"STATIC", L"0 = el del monitor (80 a 10000)", SS_LEFT, 280, 124, 300, 20, -1);
         hmk(L"STATIC", L"Expansión de altas luces", SS_LEFT, 20, 158, 170, 20, -1);
         g_hexp = hmk(TRACKBAR_CLASSW, L"", TBS_HORZ | TBS_AUTOTICKS | WS_TABSTOP, 196, 154, 290, 26, ID_HEXP);
         SendMessageW(g_hexp, TBM_SETRANGE, TRUE, MAKELPARAM(0, 100)); SendMessageW(g_hexp, TBM_SETTICFREQ, 10, 0);

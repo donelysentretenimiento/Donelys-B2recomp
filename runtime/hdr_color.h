@@ -8,6 +8,27 @@
 #define HDR_COLOR_H
 #include <math.h>
 enum { HDR_HDR10 = 2, HDR_SCRGB = 3 };
+typedef struct { float sdr_white_nits, peak_nits; } HdrLevels;
+typedef struct { float max_luminance, min_luminance, max_cll, max_fall; } HdrMetadataValues;
+/* Resolve user overrides and Windows' monitor report without assuming a 400-nit minimum.
+ * SDR white is constrained to the resolved peak so highlight expansion cannot invert its range. */
+static inline HdrLevels hdr_resolve_levels(float cfg_white, float cfg_peak, float win_white, float win_peak) {
+    HdrLevels v;
+    v.peak_nits = cfg_peak >= 80.0f && cfg_peak <= 10000.0f ? cfg_peak
+                : win_peak >= 80.0f && win_peak <= 10000.0f ? win_peak : 1000.0f;
+    v.sdr_white_nits = cfg_white >= 80.0f && cfg_white <= 500.0f ? cfg_white
+                     : win_white >= 80.0f && win_white <= 500.0f ? win_white : 203.0f;
+    if (v.sdr_white_nits > v.peak_nits) v.sdr_white_nits = v.peak_nits;
+    return v;
+}
+/* VkHdrMetadataEXT separates display capabilities from content mastering data. The converted
+ * game's content has no measured MaxCLL/MaxFALL, so report those optional fields as unknown (0). */
+static inline HdrMetadataValues hdr_metadata_values(float display_peak, float display_min) {
+    HdrMetadataValues v = {0};
+    if (display_peak > 0.0f && display_peak <= 10000.0f) v.max_luminance = display_peak;
+    if (display_min >= 0.0f && display_min <= v.max_luminance) v.min_luminance = display_min;
+    return v;
+}
 static inline float hdr_srgb_to_linear(float c) { return c <= 0.04045f ? c / 12.92f : powf((c + 0.055f) / 1.055f, 2.4f); }
 static inline float hdr_pq_encode(float nits) {              /* ST 2084 inverse EOTF; nits >= 0 */
     const float m1 = 2610.0f / 16384.0f, m2 = 2523.0f / 4096.0f * 128.0f, c1 = 3424.0f / 4096.0f, c2 = 2413.0f / 4096.0f * 32.0f, c3 = 2392.0f / 4096.0f * 32.0f;

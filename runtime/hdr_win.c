@@ -9,6 +9,7 @@
 
 /* wingdi.h of older SDKs lacks these; the numbers are the documented DISPLAYCONFIG_DEVICE_INFO_TYPE values */
 #define HW_GET_SOURCE_NAME 1
+#define HW_GET_TARGET_NAME 2
 #define HW_GET_ADVANCED_COLOR 9
 #define HW_GET_SDR_WHITE 11
 typedef struct { DISPLAYCONFIG_DEVICE_INFO_HEADER h; ULONG value; ULONG colorEncoding; ULONG bitsPerColorChannel; } HwAdvColor;      /* value: bit0 supported, bit1 enabled */
@@ -26,9 +27,15 @@ static void hw_displayconfig(const char *gdi, HdrWinInfo *o) {
             if (DisplayConfigGetDeviceInfo(&sn.header) != ERROR_SUCCESS) continue;
             char name[64]; WideCharToMultiByte(CP_ACP, 0, sn.viewGdiDeviceName, -1, name, sizeof name, NULL, NULL);
             if (_stricmp(name, gdi)) continue;
+            DISPLAYCONFIG_TARGET_DEVICE_NAME tn; memset(&tn, 0, sizeof tn);
+            tn.header.type = (DISPLAYCONFIG_DEVICE_INFO_TYPE)HW_GET_TARGET_NAME; tn.header.size = sizeof tn; tn.header.adapterId = p[i].targetInfo.adapterId; tn.header.id = p[i].targetInfo.id;
+            if (DisplayConfigGetDeviceInfo(&tn.header) == ERROR_SUCCESS) {
+                WideCharToMultiByte(CP_UTF8, 0, tn.monitorFriendlyDeviceName, -1, o->friendly_name, sizeof o->friendly_name, NULL, NULL);
+                WideCharToMultiByte(CP_UTF8, 0, tn.monitorDevicePath, -1, o->monitor_path, sizeof o->monitor_path, NULL, NULL);
+            }
             HwAdvColor ac; memset(&ac, 0, sizeof ac);
             ac.h.type = (DISPLAYCONFIG_DEVICE_INFO_TYPE)HW_GET_ADVANCED_COLOR; ac.h.size = sizeof ac; ac.h.adapterId = p[i].targetInfo.adapterId; ac.h.id = p[i].targetInfo.id;
-            if (DisplayConfigGetDeviceInfo(&ac.h) == ERROR_SUCCESS) { o->adv_supported = ac.value & 1; o->adv_enabled = (ac.value >> 1) & 1; }
+            if (DisplayConfigGetDeviceInfo(&ac.h) == ERROR_SUCCESS) { o->adv_supported = ac.value & 1; o->adv_enabled = (ac.value >> 1) & 1; o->color_encoding = (int)ac.colorEncoding; if (ac.bitsPerColorChannel) o->bits_per_color = (int)ac.bitsPerColorChannel; }
             HwSdrWhite sw; memset(&sw, 0, sizeof sw);
             sw.h.type = (DISPLAYCONFIG_DEVICE_INFO_TYPE)HW_GET_SDR_WHITE; sw.h.size = sizeof sw; sw.h.adapterId = p[i].targetInfo.adapterId; sw.h.id = p[i].targetInfo.id;
             if (DisplayConfigGetDeviceInfo(&sw.h) == ERROR_SUCCESS && sw.sdrWhiteLevel) o->sdr_white_nits = (float)sw.sdrWhiteLevel / 1000.0f * 80.0f;
@@ -57,6 +64,7 @@ int hdr_win_query(HWND hwnd, HdrWinInfo *o) {
                 if (SUCCEEDED(IDXGIOutput6_GetDesc1(o6, &d1))) {
                     o->ok = 1;
                     o->hdr_on = d1.ColorSpace == DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020;
+                    o->color_space = (int)d1.ColorSpace; o->bits_per_color = (int)d1.BitsPerColor;
                     o->max_nits = d1.MaxLuminance; o->max_full_frame_nits = d1.MaxFullFrameLuminance; o->min_nits = d1.MinLuminance;
                     for (int i = 0; i < 2; i++) { o->prim[i] = d1.RedPrimary[i]; o->prim[2 + i] = d1.GreenPrimary[i]; o->prim[4 + i] = d1.BluePrimary[i]; o->prim[6 + i] = d1.WhitePoint[i]; }
                     WideCharToMultiByte(CP_ACP, 0, d.DeviceName, -1, o->device, sizeof o->device, NULL, NULL);
@@ -68,6 +76,13 @@ int hdr_win_query(HWND hwnd, HdrWinInfo *o) {
         IDXGIAdapter1_Release(ad);
     }
     IDXGIFactory1_Release(fac);
-    if (o->ok && o->device[0]) hw_displayconfig(o->device, o);
+    if (o->ok && o->device[0]) {
+        DEVMODEA dm; memset(&dm, 0, sizeof dm); dm.dmSize = sizeof dm;
+        if (EnumDisplaySettingsA(o->device, ENUM_CURRENT_SETTINGS, &dm)) {
+            o->width = dm.dmPelsWidth; o->height = dm.dmPelsHeight;
+            o->refresh_num = dm.dmDisplayFrequency; o->refresh_den = 1;
+        }
+        hw_displayconfig(o->device, o);
+    }
     return o->ok;
 }

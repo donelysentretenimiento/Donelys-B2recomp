@@ -146,6 +146,10 @@
 !/config/perfiles/*.ini
 !/docs/edicion-mejorada/
 !/docs/edicion-mejorada/*.csv
+!/docs/hdr/
+!/docs/hdr/*.md
+!/docs/tecnico/
+!/docs/tecnico/*.md
 !/README.upstream.md
 !/CHANGELOG.md
 !/CREDITOS_Y_AUTORIA.md
@@ -162,3 +166,4 @@
 !/tests/
 !/tests/hdr_color_test.c
 !/tests/hdr_probe.c
+!/tests/hdr_win_change_test.c
